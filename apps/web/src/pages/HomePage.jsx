@@ -213,18 +213,11 @@ const INTEREST_OPTIONS = [
 
 const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '' };
 
-function SectionHeader({ index, label, title, description, dark = false }) {
+function SectionHeader({ label, title, description, dark = false }) {
     return (
         <div className="grid gap-6 border-t pt-8 md:grid-cols-12 md:gap-8" style={{ borderColor: dark ? 'hsl(0 0% 100% / 0.12)' : 'hsl(var(--border))' }}>
             <div className="md:col-span-3">
-                <span
-                    className={`font-display text-6xl font-bold leading-none tracking-tight md:text-7xl ${
-                        dark ? 'text-white/15' : 'text-navy/10'
-                    }`}
-                >
-                    {index}
-                </span>
-                <p className={`mt-3 font-mono text-[10px] uppercase tracking-[0.24em] ${dark ? 'text-electric' : 'text-electric'}`}>
+                <p className={`font-mono text-[10px] uppercase tracking-[0.24em] ${dark ? 'text-electric' : 'text-electric'}`}>
                     {label}
                 </p>
             </div>
@@ -535,8 +528,6 @@ export default function HomePage() {
                 <section id="about" className="bg-background">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="01"
                                 label="About"
                                 title="An engineering-first consultancy, built around simulation"
                             />
@@ -603,8 +594,6 @@ export default function HomePage() {
                 <section id="services" className="tech-grid bg-secondary/60">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="02"
                                 label="Services"
                                 title="Six practice areas, one engineering standard"
                                 description="Every engagement is delivered by specialist engineers using industry-standard tools and documented methods."
@@ -641,9 +630,6 @@ export default function HomePage() {
                 <section id="capabilities" className="tech-grid-dark bg-navy">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                dark
-                                index="03"
                                 label="Capabilities"
                                 title="What we deliver today — and what is on our roadmap"
                                 description="We are transparent about maturity: core practice areas, available capabilities, and planned additions are clearly separated."
@@ -706,8 +692,6 @@ export default function HomePage() {
                 <section id="industries" className="bg-background">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="04"
                                 label="Industries"
                                 title="Sector knowledge that shapes better models"
                                 description="Our engineers bring domain context to every model — so loadcases, constraints and acceptance criteria reflect real operating conditions."
@@ -744,8 +728,6 @@ export default function HomePage() {
                 <section id="process" className="tech-grid bg-secondary/60">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="05"
                                 label="How We Work"
                                 title="A disciplined loop from requirement to delivery"
                             />
@@ -787,9 +769,6 @@ export default function HomePage() {
                 <section id="quality" className="tech-grid-dark bg-navy-deep">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                dark
-                                index="06"
                                 label="Quality & Compliance"
                                 title="Clear commitments, honestly stated"
                                 description="We distinguish clearly between what is in place today, what is in progress, and what is planned. Certifications listed as planned are not yet held."
@@ -830,8 +809,6 @@ export default function HomePage() {
                 <section id="case-studies" className="bg-background">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="07"
                                 label="Case Studies"
                                 title="Representative engagements, anonymised under NDA"
                                 description="Client identities and program details are withheld under confidentiality agreements. Scope and approach are described as delivered."
@@ -890,8 +867,6 @@ export default function HomePage() {
                 <section id="leadership" className="tech-grid bg-secondary/60">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                index="08"
                                 label="Leadership"
                                 title="The team behind CAxperts"
                                 description="CAxperts is led by practising engineers who stay close to the work — reviewing models, methods and deliverables first-hand."
@@ -924,9 +899,6 @@ export default function HomePage() {
                 <section id="contact" className="tech-grid-dark bg-navy">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
-                            <SectionHeader
-                                dark
-                                index="09"
                                 label="Contact"
                                 title="Discuss your requirement"
                                 description="Tell us about your program, component or engineering challenge. We respond to every enquiry with a technical point of view — not a sales script."

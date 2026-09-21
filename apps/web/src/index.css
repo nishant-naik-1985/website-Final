@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Roboto+Slab:wght@500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 220 14% 93%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 217 91% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 86%;
+    --input: 220 13% 86%;
+    --ring: 217 91% 55%;
+    --radius: 0.125rem;
+    --navy: 222 47% 11%;
+    --navy-deep: 223 55% 7%;
+    --electric: 217 91% 55%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 223 55% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 220 20% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 20% 16%;
+    --muted-foreground: 217 15% 65%;
+    --accent: 217 91% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 217 91% 60%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  overflow-x: clip;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+::selection {
+  background-color: hsl(var(--electric));
+  color: hsl(0 0% 100%);
+}
+
+section[id] {
+  scroll-margin-top: 4rem;
+}
+
+/* Technical blueprint grids */
+.tech-grid {
+  background-image:
+    linear-gradient(to right, hsl(222 47% 11% / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(222 47% 11% / 0.055) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.tech-grid-dark {
+  background-image:
+    linear-gradient(to right, hsl(0 0% 100% / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(0 0% 100% / 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}

@@ -245,6 +245,13 @@ function EnquiryForm() {
     const [errorMessage, setErrorMessage] = useState('');
 
     const updateField = (field) => (event) => {
+        if (field === 'phone') {
+            const rawValue = event.target.value;
+            const sanitized = rawValue.replace(/[\u202A-\u202E]/g, '').replace(/[^+\d()\s-]/g, '');
+            setForm((prev) => ({ ...prev, [field]: sanitized }));
+            return;
+        }
+
         setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
@@ -255,10 +262,18 @@ function EnquiryForm() {
             setErrorMessage('Please select your area of interest.');
             return;
         }
+
+        const trimmedPhone = form.phone.trim();
+        if (trimmedPhone && !/^[+]?[(]?[0-9A-Z]{1,4}[)]?[-\s0-9A-Z()]*$/.test(trimmedPhone)) {
+            setStatus('error');
+            setErrorMessage('Please enter a valid phone number with an international country code if needed.');
+            return;
+        }
+
         setStatus('submitting');
         setErrorMessage('');
         try {
-            await pb.collection('enquiries').create({ ...form });
+            await pb.collection('enquiries').create({ ...form, phone: trimmedPhone });
             setStatus('success');
             setForm(EMPTY_FORM);
         } catch (err) {
@@ -344,12 +359,14 @@ function EnquiryForm() {
                     </label>
                     <input
                         id="enquiry-phone"
-                        type="tel"
-                        maxLength={40}
+                        type="text"
+                        inputMode="tel"
+                        autoComplete="tel"
                         value={form.phone}
                         onChange={updateField('phone')}
-                        placeholder="+91 ..."
+                        placeholder="+1 555 123 4567"
                         className={inputClass}
+                        pattern="^[+()0-9\s-]{7,20}$"
                     />
                 </div>
                 <div className="sm:col-span-2">

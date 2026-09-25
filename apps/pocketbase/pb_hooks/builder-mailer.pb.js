@@ -4,22 +4,33 @@ const COMPANY_ENQUIRY_EMAIL = "info@caxperts-engineering.com";
 
 const sendEnquiryEmail = (to, subject, html, text) => {
     const senderAddress = $os.getenv("BUILDER_MAILER_SENDER_ADDRESS") || $app.settings().meta.senderAddress || "noreply@localhost";
+    const apiUrl = $os.getenv("BUILDER_MAILER_API_URL");
+    const apiKey = $os.getenv("BUILDER_MAILER_API_KEY");
 
-    const mail = new MailerMessage({
-        from: {
-            address: senderAddress,
-            name: "CAxperts Engineering",
-        },
-        to: [{
-            address: to,
-            name: "CAxperts Engineering",
-        }],
-        subject,
-        html,
-        text,
-    });
+    if (!apiUrl || !apiKey) {
+        $app.logger().warn("Skipping enquiry email because builder mailer env vars are not configured.");
+        return;
+    }
 
-    $app.newMailClient().send(mail);
+    try {
+        const mail = new MailerMessage({
+            from: {
+                address: senderAddress,
+                name: "CAxperts Engineering",
+            },
+            to: [{
+                address: to,
+                name: "CAxperts Engineering",
+            }],
+            subject,
+            html,
+            text,
+        });
+
+        $app.newMailClient().send(mail);
+    } catch (err) {
+        $app.logger().error("Failed to send enquiry email", "error", err);
+    }
 };
 
 onRecordAfterCreateSuccess((e) => {
@@ -105,6 +116,14 @@ onMailerSend((e) => {
     }
 
     const senderAddress = $os.getenv("BUILDER_MAILER_SENDER_ADDRESS");
+    const apiUrl = $os.getenv("BUILDER_MAILER_API_URL");
+    const apiKey = $os.getenv("BUILDER_MAILER_API_KEY");
+
+    if (!senderAddress || !apiUrl || !apiKey) {
+        $app.logger().warn("Builder mailer env vars are missing. Skipping outbound email dispatch.");
+        return e.next();
+    }
+
     const cc = (e.message.cc || []).map((recipient) => recipient.address).filter(Boolean);
     const bcc = (e.message.bcc || []).map((recipient) => recipient.address).filter(Boolean);
 
@@ -127,10 +146,10 @@ onMailerSend((e) => {
     }
 
     const response = $http.send({
-        url: `${$os.getenv("BUILDER_MAILER_API_URL")}/api/v2/email`,
+        url: `${apiUrl}/api/v2/email`,
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${$os.getenv("BUILDER_MAILER_API_KEY")}`,
+            "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)

@@ -264,7 +264,7 @@ function EnquiryForm() {
         }
 
         const trimmedPhone = form.phone.trim();
-        if (trimmedPhone && !/^[+]?[(]?[0-9A-Z]{1,4}[)]?[-\s0-9A-Z()]*$/.test(trimmedPhone)) {
+        if (trimmedPhone && !/^\+?[0-9()\s-]{7,20}$/.test(trimmedPhone)) {
             setStatus('error');
             setErrorMessage('Please enter a valid phone number with an international country code if needed.');
             return;
@@ -366,7 +366,7 @@ function EnquiryForm() {
                         onChange={updateField('phone')}
                         placeholder="+1 555 123 4567"
                         className={inputClass}
-                        pattern="^[+()0-9\s-]{7,20}$"
+                        pattern="^[+()0-9\\s-]{7,20}$"
                     />
                 </div>
                 <div className="sm:col-span-2">

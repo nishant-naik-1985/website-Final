@@ -203,13 +203,6 @@ class SMTP
             }
         }
 
-        foreach ($mail->getReplyTos() as $address) {
-            $this->writeCommand('MAIL FROM:<' . $mail->getFrom() . '>');
-            $this->readResponse();
-            $this->writeCommand('RCPT TO:<' . $address . '>');
-            $this->readResponse();
-        }
-
         $message = $mail->createMessage();
         if (!$this->data($message)) {
             $this->quit();

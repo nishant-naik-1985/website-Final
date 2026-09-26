@@ -285,7 +285,7 @@ function EnquiryForm() {
         setStatus('submitting');
         setErrorMessage('');
         try {
-            const response = await fetch('/api/contact', {
+            const response = await fetch('/api/contact.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -469,13 +469,6 @@ function EnquiryForm() {
                 />
             </div>
 
-            {status === 'error' && (
-                <p className="mt-5 flex items-center gap-2 border border-red-400/40 bg-red-400/10 px-3.5 py-3 text-sm text-red-200">
-                    <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                    {errorMessage}
-                </p>
-            )}
-
             <button
                 type="submit"
                 disabled={status === 'submitting'}
@@ -493,8 +486,8 @@ function EnquiryForm() {
                     </>
                 )}
             </button>
-            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/40">
-                Submissions are handled under NDA on request and processed in line with GDPR principles.
+            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/60">
+                For enquiries: <a href="mailto:info@caxperts-engineering.com" className="text-electric underline-offset-2 hover:underline">info@caxperts-engineering.com</a>
             </p>
         </form>
     );

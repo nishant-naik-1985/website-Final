@@ -1,0 +1,10 @@
+{
+  "host": "smtp.hostinger.com",
+  "port": 465,
+  "secure": true,
+  "username": "info@caxperts-engineering.com",
+  "password": "",
+  "from_email": "info@caxperts-engineering.com",
+  "from_name": "CAxperts Engineering",
+  "to_email": "info@caxperts-engineering.com"
+}

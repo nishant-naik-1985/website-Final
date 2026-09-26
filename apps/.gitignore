@@ -1,0 +1,6 @@
+# SMTP credentials for the contact form (see web/server.js MAIL_CONFIG_PATH).
+# Never commit this — it holds live SMTP username/password.
+mail.config.json
+
+# Example config template, safe to commit.
+!mail.config.example.json

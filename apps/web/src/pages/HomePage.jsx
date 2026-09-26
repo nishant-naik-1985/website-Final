@@ -23,7 +23,6 @@ import {
 import Reveal from '@/components/Reveal';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
-import pb from '@/lib/pocketbaseClient';
 import {
     Select,
     SelectContent,
@@ -211,7 +210,9 @@ const INTEREST_OPTIONS = [
     { value: 'other', label: 'Other' },
 ];
 
-const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '' };
+// `website` is a honeypot: real visitors never see or fill this field (it's
+// hidden off-screen below). A non-empty value means a bot filled it.
+const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '', website: '' };
 
 function SectionHeader({ label, title, description, dark = false }) {
     return (
@@ -257,13 +258,24 @@ function EnquiryForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!form.interest) {
+
+        const name = form.name.trim();
+        const email = form.email.trim();
+        const message = form.message.trim();
+        const trimmedPhone = form.phone.trim();
+
+        if (!name || !email || !message) {
             setStatus('error');
-            setErrorMessage('Please select your area of interest.');
+            setErrorMessage('Please fill in your name, email, and message.');
             return;
         }
 
-        const trimmedPhone = form.phone.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setStatus('error');
+            setErrorMessage('Please provide a valid email address.');
+            return;
+        }
+
         if (trimmedPhone && !/^\+?[0-9()\s-]{7,20}$/.test(trimmedPhone)) {
             setStatus('error');
             setErrorMessage('Please enter a valid phone number with an international country code if needed.');
@@ -273,12 +285,38 @@ function EnquiryForm() {
         setStatus('submitting');
         setErrorMessage('');
         try {
-            await pb.collection('enquiries').create({ ...form, phone: trimmedPhone });
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    company: form.company.trim(),
+                    email,
+                    phone: trimmedPhone,
+                    message,
+                    interest: form.interest,
+                    website: form.website,
+                }),
+            });
+
+            const body = await response.json().catch(() => null);
+            if (!response.ok || !body?.ok) {
+                if (response.status === 429) {
+                    setErrorMessage(body?.error || 'Too many submissions. Please try again later.');
+                } else if (response.status === 503) {
+                    setErrorMessage(body?.error || 'Email service is not configured. Please email info@caxperts-engineering.com directly.');
+                } else {
+                    setErrorMessage(body?.error || 'Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
+                }
+                setStatus('error');
+                return;
+            }
+
             setStatus('success');
             setForm(EMPTY_FORM);
         } catch (err) {
             setStatus('error');
-            setErrorMessage('Something went wrong while submitting your enquiry. Please try again.');
+            setErrorMessage('Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
         }
     };
 
@@ -411,6 +449,24 @@ function EnquiryForm() {
                         className={`${inputClass} resize-y`}
                     />
                 </div>
+            </div>
+
+            {/* Honeypot — hidden from real visitors and screen readers; bots that
+                fill every field will trip it. */}
+            <div
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', top: 0, width: 1, height: 1, overflow: 'hidden' }}
+            >
+                <label htmlFor="enquiry-website">Website</label>
+                <input
+                    id="enquiry-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={updateField('website')}
+                />
             </div>
 
             {status === 'error' && (

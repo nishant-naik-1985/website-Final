@@ -191,8 +191,8 @@ function validateContactSubmission(payload) {
 	if (phone && !PHONE_PATTERN.test(phone)) {
 		errors.push('Please provide a valid phone number.');
 	}
-	if (company && company.length > 200) {
-		errors.push('Company name is too long.');
+	if (!company || company.length > 200) {
+		errors.push('Please provide your company name.');
 	}
 	if (message && message.length > 5000) {
 		errors.push('Your message is too long.');

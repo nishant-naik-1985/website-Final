@@ -409,7 +409,7 @@ function EnquiryForm() {
                 </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="enquiry-interest" className={labelClass}>
-                        Area of Interest *
+                        Area of Interest
                     </label>
                     <Select
                         value={form.interest}

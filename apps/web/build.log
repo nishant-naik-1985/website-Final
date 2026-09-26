@@ -1,6 +1,0 @@
-npm warn ";" is being parsed as a normal command line argument.
-npm warn Unknown cli config "--DIST---". This will stop working in the next major version of npm.
-
-> web@0.0.0 build
-> node tools/generate-llms.js || true && vite build ; type build.log ; echo ; if exist dist (dir /s /b dist) else (echo NO_DIST)
-

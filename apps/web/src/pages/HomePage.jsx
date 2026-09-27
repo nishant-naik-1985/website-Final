@@ -21,6 +21,7 @@ import {
     AlertCircle,
 } from 'lucide-react';
 import Reveal from '@/components/Reveal';
+import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import Seo from '@/components/Seo';
@@ -655,7 +656,8 @@ export default function HomePage() {
                     </div>
                     <div className="mx-auto max-w-[90rem] px-4 pb-16 sm:px-6 lg:px-10">
                         <Reveal y={32}>
-                            <figure className="border border-white/15">
+                            <figure className="relative border border-white/15">
+                                <AiImageBadge />
                                 <img
                                     src={HERO_IMAGE}
                                     alt="Finite element mesh of an automotive body-in-white with electric-blue wireframe on a dark navy background"
@@ -721,7 +723,8 @@ export default function HomePage() {
                                 </div>
                             </Reveal>
                             <Reveal delay={0.2} y={32}>
-                                <figure className="border border-border">
+                                <figure className="relative border border-border">
+                                    <AiImageBadge />
                                     <img
                                         src={ABOUT_IMAGE}
                                         alt="Two engineers reviewing CAD chassis models on dual monitors in the CAxperts engineering office in Pune"
@@ -1044,7 +1047,8 @@ export default function HomePage() {
                             {CASE_STUDIES.map((study, i) => (
                                 <Reveal key={study.tag} delay={0.08 * i} className="h-full">
                                     <article className="flex h-full flex-col border border-border bg-card">
-                                        <figure>
+                                        <figure className="relative">
+                                            <AiImageBadge />
                                             <img
                                                 src={study.image}
                                                 alt={study.caption}

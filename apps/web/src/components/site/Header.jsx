@@ -18,13 +18,12 @@ export default function SiteHeader() {
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-navy-deep/95 backdrop-blur-sm">
             <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-10">
-                <a href="#home" className="flex items-baseline gap-2.5">
-                    <span className="font-display text-xl font-bold tracking-tight text-white">
-                        CA<span className="text-electric">x</span>perts
-                    </span>
-                    <span className="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 md:inline">
-                        Engineering Pvt. Ltd.
-                    </span>
+                <a href="#home" className="flex h-10 w-44 items-center overflow-hidden sm:w-52" aria-label="CAxperts Engineering home">
+                    <img
+                        src="/CAxperts-logo-black-bg.png"
+                        alt="CAxperts Engineering Pvt. Ltd."
+                        className="h-full w-full object-contain"
+                    />
                 </a>
 
                 <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">

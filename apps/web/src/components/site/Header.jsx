@@ -22,7 +22,7 @@ export default function SiteHeader() {
                     <img
                         src="/CAxperts-logo-black-bg.png"
                         alt="CAxperts Engineering Pvt. Ltd."
-                        className="h-full w-full scale-[1.6] object-contain"
+                        className="h-full w-full scale-[2.4] object-contain"
                     />
                 </a>
 

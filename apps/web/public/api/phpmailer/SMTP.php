@@ -117,7 +117,7 @@ class SMTP
             return false;
         }
 
-        $data = rtrim($body, "\r\n") . "\r\n.", "\r\n";
+        $data = rtrim($body, "\r\n") . "\r\n.\r\n";
         @fwrite($this->socket, $data);
 
         $response = $this->readResponse();

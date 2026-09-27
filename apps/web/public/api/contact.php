@@ -53,11 +53,13 @@ function rateLimitExceeded($ip) {
 function getConfig() {
     $configPath = dirname($_SERVER['DOCUMENT_ROOT']) . '/mail.config.php';
     if (!is_file($configPath)) {
+        error_log('[contact.php] mail.config.php not found at the configured parent document-root path.');
         return null;
     }
 
     $config = require $configPath;
     if (!is_array($config)) {
+        error_log('[contact.php] mail.config.php must return an array.');
         return null;
     }
 
@@ -67,6 +69,7 @@ function getConfig() {
             if ($key === 'password') {
                 continue;
             }
+            error_log('[contact.php] mail.config.php is missing the required field: ' . $key);
             return null;
         }
     }
@@ -171,7 +174,9 @@ try {
     $mail->send();
     sendJson(200, ['ok' => true]);
 } catch (MailerException $exception) {
+    error_log('[contact.php] SMTP delivery failed: ' . $exception->getMessage());
     sendJson(503, ['ok' => false, 'error' => 'Service temporarily unavailable']);
 } catch (Exception $exception) {
+    error_log('[contact.php] Mail delivery failed: ' . $exception->getMessage());
     sendJson(503, ['ok' => false, 'error' => 'Service temporarily unavailable']);
 }

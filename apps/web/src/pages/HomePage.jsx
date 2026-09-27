@@ -486,9 +486,6 @@ function EnquiryForm() {
                     </>
                 )}
             </button>
-            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/60">
-                For enquiries: <a href="mailto:info@caxperts-engineering.com" className="text-electric underline-offset-2 hover:underline">info@caxperts-engineering.com</a>
-            </p>
         </form>
     );
 }

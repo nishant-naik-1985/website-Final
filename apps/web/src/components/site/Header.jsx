@@ -23,13 +23,15 @@ export default function SiteHeader() {
                         src="/logo_only_C.png"
                         alt=""
                         aria-hidden="true"
-                        className="h-9 w-9 object-contain"
+                        className="h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11"
                     />
-                    <span className="font-display text-xl font-bold tracking-tight text-white">
-                        CA<span className="text-electric">x</span>perts
-                    </span>
-                    <span className="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-white/70 md:inline">
-                        Engineering Pvt. Ltd.
+                    <span className="flex min-w-0 flex-col items-center leading-none">
+                        <span className="font-display text-xl font-bold tracking-tight text-white sm:text-[1.35rem]">
+                            CA<span className="text-electric">x</span>perts
+                        </span>
+                        <span className="mt-1 whitespace-nowrap font-sans text-[8px] font-semibold uppercase tracking-[0.12em] text-white/75 sm:text-[9px]">
+                            Engineering Pvt. Ltd.
+                        </span>
                     </span>
                 </a>
 

@@ -21,8 +21,10 @@ import {
     AlertCircle,
 } from 'lucide-react';
 import Reveal from '@/components/Reveal';
+import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
+import Seo from '@/components/Seo';
 import {
     Select,
     SelectContent,
@@ -125,10 +127,24 @@ const INDUSTRIES = [
 const PROCESS_STEPS = [
     { name: 'Understand', detail: 'Requirements, constraints, regulations and success criteria are captured up front.' },
     { name: 'Plan', detail: 'Scope, methods, tools and deliverables are defined with clear review points.' },
-    { name: 'Engineer', detail: 'Models are built, analysed and iterated by specialist CAE and CAD engineers.' },
-    { name: 'Review', detail: 'Results are checked against requirements and discussed with your team.' },
+    { name: 'Execute', detail: 'Models are built, analysed and iterated by specialist CAE and CAD engineers.' },
+    { name: 'Validate', detail: 'Results are checked against requirements and discussed with your team.' },
     { name: 'Deliver', detail: 'Documented models, reports and design proposals are handed over on schedule.' },
-    { name: 'Improve', detail: 'Feedback feeds method refinement for the next loop of development.' },
+];
+
+const WHY_ITEMS = [
+    { title: 'Engineering Expertise', detail: 'Hands-on CAE, CAD and product-development support grounded in engineering judgement.' },
+    { title: 'Flexible Delivery', detail: 'Project-based engagements, dedicated resources and extended engineering-team support.' },
+    { title: 'Global Collaboration', detail: 'Clear technical communication for customer teams working across Europe and India.' },
+    { title: 'Simulation-Driven Development', detail: 'Analysis, design decisions and validation connected through a disciplined workflow.' },
+    { title: 'Quality & Confidentiality', detail: 'Documented methods, review points and NDA-based handling of customer information.' },
+];
+
+const DELIVERY_MODELS = [
+    { name: 'Dedicated Engineering Team', detail: 'A focused CAE team supporting the customer engineering organisation over an agreed scope.' },
+    { name: 'Project-Based Engineering', detail: 'Defined requirements, milestones and deliverables for a specific technical programme.' },
+    { name: 'Extended Engineering Team', detail: 'Specialist engineers operate as an extension of an existing product-development team.' },
+    { name: 'Europe–India Delivery', detail: 'Customer coordination and technical communication aligned with India-based engineering execution.' },
 ];
 
 const QUALITY_ITEMS = [
@@ -161,7 +177,6 @@ const QUALITY_ITEMS = [
 const CASE_STUDIES = [
     {
         image: CASE_CRASH_IMAGE,
-        figure: 'Fig. 03',
         caption: 'Full-vehicle crash simulation study',
         tag: 'Crash & Occupant Safety',
         title: 'Passenger vehicle crash & occupant safety program',
@@ -172,7 +187,6 @@ const CASE_STUDIES = [
     },
     {
         image: CASE_STRUCTURAL_IMAGE,
-        figure: 'Fig. 04',
         caption: 'Structural stress contour review',
         tag: 'Structural & Durability',
         title: 'Structural & durability assessment for heavy machinery',
@@ -183,7 +197,6 @@ const CASE_STUDIES = [
     },
     {
         image: CASE_AUTOMATION_IMAGE,
-        figure: 'Fig. 05',
         caption: 'Scripted CAE workflow automation',
         tag: 'CAE Automation',
         title: 'Automation of a repetitive crash-simulation workflow',
@@ -206,7 +219,9 @@ const INTEREST_OPTIONS = [
 
 // `website` is a honeypot: real visitors never see or fill this field (it's
 // hidden off-screen below). A non-empty value means a bot filled it.
-const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '', website: '' };
+const INDUSTRY_OPTIONS = ['Automotive', 'Industrial', 'Aerospace', 'Mobility', 'Energy', 'Other'];
+const TIMELINE_OPTIONS = ['Immediate', 'Within 1 month', '1–3 months', 'Exploring options'];
+const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', industry: '', timeline: '', message: '', website: '' };
 
 function SectionHeader({ label, title, description, dark = false }) {
     return (
@@ -255,12 +270,13 @@ function EnquiryForm() {
 
         const name = form.name.trim();
         const email = form.email.trim();
+        const company = form.company.trim();
         const message = form.message.trim();
         const trimmedPhone = form.phone.trim();
 
-        if (!name || !email || !message) {
+        if (!name || !company || !email || !form.interest || !message) {
             setStatus('error');
-            setErrorMessage('Please fill in your name, email, and message.');
+            setErrorMessage('Please fill in your name, company, business email, service and project description.');
             return;
         }
 
@@ -284,11 +300,13 @@ function EnquiryForm() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name,
-                    company: form.company.trim(),
+                    company,
                     email,
                     phone: trimmedPhone,
                     message,
                     interest: form.interest,
+                    industry: form.industry,
+                    timeline: form.timeline,
                     website: form.website,
                 }),
             });
@@ -316,7 +334,7 @@ function EnquiryForm() {
 
     if (status === 'success') {
         return (
-            <div className="flex h-full min-h-[24rem] flex-col items-center justify-center border border-white/15 bg-white/[0.03] p-10 text-center">
+            <div className="flex h-full min-h-[24rem] flex-col items-center justify-center border border-white/15 bg-white/[0.03] p-10 text-center" role="status" aria-live="polite">
                 <CheckCircle2 className="h-10 w-10 text-electric" strokeWidth={1.5} />
                 <p className="mt-5 font-display text-2xl font-bold text-white">Enquiry received</p>
                 <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
@@ -373,7 +391,7 @@ function EnquiryForm() {
                 </div>
                 <div>
                     <label htmlFor="enquiry-email" className={labelClass}>
-                        Email *
+                        Business Email *
                     </label>
                     <input
                         id="enquiry-email"
@@ -403,7 +421,7 @@ function EnquiryForm() {
                 </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="enquiry-interest" className={labelClass}>
-                        Area of Interest
+                        Service Required *
                     </label>
                     <Select
                         value={form.interest}
@@ -428,9 +446,55 @@ function EnquiryForm() {
                         </SelectContent>
                     </Select>
                 </div>
+                <div>
+                    <label htmlFor="enquiry-industry" className={labelClass}>
+                        Industry
+                    </label>
+                    <Select
+                        value={form.industry}
+                        onValueChange={(value) => setForm((prev) => ({ ...prev, industry: value }))}
+                    >
+                        <SelectTrigger
+                            id="enquiry-industry"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/35 [&>svg]:text-white/50"
+                        >
+                            <SelectValue placeholder="Select an industry" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
+                            {INDUSTRY_OPTIONS.map((option) => (
+                                <SelectItem key={option} value={option} className="text-sm focus:bg-electric focus:text-white">
+                                    {option}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <label htmlFor="enquiry-timeline" className={labelClass}>
+                        Expected Timeline
+                    </label>
+                    <Select
+                        value={form.timeline}
+                        onValueChange={(value) => setForm((prev) => ({ ...prev, timeline: value }))}
+                    >
+                        <SelectTrigger
+                            id="enquiry-timeline"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/35 [&>svg]:text-white/50"
+                        >
+                            <SelectValue placeholder="Select a timeframe" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
+                            {TIMELINE_OPTIONS.map((option) => (
+                                <SelectItem key={option} value={option} className="text-sm focus:bg-electric focus:text-white">
+                                    {option}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="enquiry-message" className={labelClass}>
-                        Message *
+                        Project Description *
                     </label>
                     <textarea
                         id="enquiry-message"
@@ -439,7 +503,7 @@ function EnquiryForm() {
                         maxLength={5000}
                         value={form.message}
                         onChange={updateField('message')}
-                        placeholder="Briefly describe your requirement, program or challenge."
+                        placeholder="Describe the component, loadcase, model or engineering challenge."
                         className={`${inputClass} resize-y`}
                     />
                 </div>
@@ -475,11 +539,19 @@ function EnquiryForm() {
                     </>
                 ) : (
                     <>
-                        Submit Enquiry
+                        Submit Requirement
                         <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
                     </>
                 )}
             </button>
+            {status === 'error' && errorMessage && (
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-red-300" role="alert">
+                    {errorMessage}
+                </p>
+            )}
+            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
+                Your information will be treated confidentially and used only to respond to your enquiry.
+            </p>
         </form>
     );
 }
@@ -488,10 +560,27 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
-                <title>CAxperts Engineering Pvt. Ltd. — Engineering Intelligence. Simulation Excellence.</title>
+                <title>CAXPERTS Engineering | CAE, CAD & Simulation Engineering</title>
                 <meta
                     name="description"
-                    content="CAxperts Engineering Pvt. Ltd. provides CAE, CAD, simulation, engineering consulting, automation and engineering resource support for automotive and industrial customers. Based in Pune, India."
+                    content="CAXPERTS provides CAE, CAD and simulation engineering for automotive, industrial and mobility product development, from concept to validated design."
+                />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'Organization',
+                        name: 'CAxperts Engineering Pvt. Ltd.',
+                        url: 'https://caxperts-engineering.com/',
+                        email: 'info@caxperts-engineering.com',
+                        address: { '@type': 'PostalAddress', addressLocality: 'Pune', addressCountry: 'IN' },
+                        areaServed: ['Europe', 'India'],
+                        knowsAbout: ['CAE engineering', 'CAD engineering', 'Crash simulation', 'Finite element analysis', 'Engineering automation'],
+                    })}
+                </script>
+                <Seo
+                    title="CAXPERTS Engineering | CAE, CAD & Simulation Engineering"
+                    description="CAE, CAD and simulation engineering for automotive, industrial and mobility product development."
+                    siteName="CAXPERTS Engineering"
                 />
             </Helmet>
 
@@ -509,10 +598,10 @@ export default function HomePage() {
                         </Reveal>
                         <Reveal delay={0.1}>
                             <h1 className="mt-6 max-w-5xl font-display text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
-                                Engineering Intelligence.
+                                Engineering Simulation.
                                 <br />
                                 <span className="relative inline-block">
-                                    Simulation Excellence.
+                                    Delivered with Precision.
                                     <span
                                         className="absolute -bottom-1 left-0 h-[3px] w-full bg-electric sm:-bottom-2"
                                         aria-hidden="true"
@@ -522,9 +611,8 @@ export default function HomePage() {
                         </Reveal>
                         <Reveal delay={0.2}>
                             <p className="mt-8 max-w-2xl leading-relaxed text-white/65">
-                                CAxperts Engineering Pvt. Ltd. is an engineering services company based in Pune, India —
-                                delivering CAE, CAD, simulation, engineering consulting, automation and engineering
-                                resource support for automotive and industrial customers.
+                                CAxperts Engineering delivers CAE, CAD and simulation engineering for automotive,
+                                industrial and mobility product development — from concept studies to validated design.
                             </p>
                         </Reveal>
                         <Reveal delay={0.3}>
@@ -548,7 +636,7 @@ export default function HomePage() {
                             <div className="mt-14 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-3">
                                 {[
                                     ['Location', 'Pune, India'],
-                                    ['Focus', 'Automotive & Industrial'],
+                                    ['Sectors', 'Automotive · Industrial · Mobility'],
                                     ['Practice', 'CAE · CAD · Automation'],
                                 ].map(([label, value]) => (
                                     <div key={label} className="bg-navy-deep px-5 py-4">
@@ -565,7 +653,8 @@ export default function HomePage() {
                     </div>
                     <div className="mx-auto max-w-[90rem] px-4 pb-16 sm:px-6 lg:px-10">
                         <Reveal y={32}>
-                            <figure className="border border-white/15">
+                            <figure className="relative border border-white/15">
+                                <AiImageBadge />
                                 <img
                                     src={HERO_IMAGE}
                                     alt="Finite element mesh of an automotive body-in-white with electric-blue wireframe on a dark navy background"
@@ -573,7 +662,7 @@ export default function HomePage() {
                                     loading="eager"
                                 />
                                 <figcaption className="flex items-center justify-between border-t border-white/15 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-                                    <span>Fig. 01 — Finite element mesh study, body-in-white</span>
+                                    <span>Finite element mesh study, body-in-white</span>
                                     <span className="hidden sm:inline">CAxperts / CAE</span>
                                 </figcaption>
                             </figure>
@@ -631,7 +720,8 @@ export default function HomePage() {
                                 </div>
                             </Reveal>
                             <Reveal delay={0.2} y={32}>
-                                <figure className="border border-border">
+                                <figure className="relative border border-border">
+                                    <AiImageBadge />
                                     <img
                                         src={ABOUT_IMAGE}
                                         alt="Two engineers reviewing CAD chassis models on dual monitors in the CAxperts engineering office in Pune"
@@ -639,11 +729,36 @@ export default function HomePage() {
                                         loading="lazy"
                                     />
                                     <figcaption className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                                        <span>Fig. 02 — Engineering review, Pune studio</span>
+                                        <span>Engineering review, Pune studio</span>
                                         <span className="hidden sm:inline">CAxperts / CAD</span>
                                     </figcaption>
                                 </figure>
                             </Reveal>
+                        </div>
+                    </div>
+                </section>
+
+                {/* WHY CAXPERTS */}
+                <section id="why-caxperts" className="bg-background">
+                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+                        <Reveal>
+                            <SectionHeader
+                                label="Why CAXPERTS"
+                                title="Engineering support built around the decisions that matter"
+                                description="We combine specialist simulation practice with clear communication, disciplined reviews and delivery models that fit the customer organisation."
+                            />
+                        </Reveal>
+                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
+                            {WHY_ITEMS.map((item, i) => (
+                                <Reveal key={item.title} delay={0.06 * i} className="h-full">
+                                    <article className="flex h-full flex-col bg-card p-6 lg:p-7">
+                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
+                                            {item.title}
+                                        </h3>
+                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
+                                    </article>
+                                </Reveal>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -668,11 +783,8 @@ export default function HomePage() {
                                                 strokeWidth={1.5}
                                                 aria-hidden="true"
                                             />
-                                            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground group-hover:text-white/40">
-                                                S.0{i + 1}
-                                            </span>
                                         </div>
-                                        <h3 className="mt-6 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
+                                        <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
                                             {service.title}
                                         </h3>
                                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-hover:text-white/65">
@@ -706,9 +818,6 @@ export default function HomePage() {
                                             >
                                                 {group.status}
                                             </span>
-                                            <span className="font-mono text-[10px] tracking-[0.2em] text-white/30">
-                                                C.0{gi + 1}
-                                            </span>
                                         </div>
                                         <ul className="mt-6 flex-1 divide-y divide-white/10 border-y border-white/10">
                                             {group.items.map((item) => (
@@ -735,12 +844,9 @@ export default function HomePage() {
                                     Toolchain — Solvers · Pre/Post · CAD · Scripting
                                 </p>
                                 <div className="grid grid-cols-2 gap-px bg-white/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                                    {TOOLS.map((tool, i) => (
+                                    {TOOLS.map((tool) => (
                                         <div key={tool} className="bg-navy px-4 py-4">
-                                            <p className="font-mono text-[9px] tracking-[0.2em] text-white/30">
-                                                T.{String(i + 1).padStart(2, '0')}
-                                            </p>
-                                            <p className="mt-1 font-mono text-sm font-medium text-white/85">{tool}</p>
+                                            <p className="font-mono text-sm font-medium text-white/85">{tool}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -763,9 +869,6 @@ export default function HomePage() {
                             {INDUSTRIES.map((industry, i) => (
                                 <Reveal key={industry.name} delay={0.06 * i} className="h-full">
                                     <div className="flex h-full items-start gap-5 bg-card p-6 lg:p-7">
-                                        <span className="font-display text-3xl font-bold leading-none text-navy/10">
-                                            {String(i + 1).padStart(2, '0')}
-                                        </span>
                                         <div>
                                             <industry.icon
                                                 className="h-5 w-5 text-electric"
@@ -795,14 +898,11 @@ export default function HomePage() {
                                 title="A disciplined loop from requirement to delivery"
                             />
                         </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-6">
+                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
                             {PROCESS_STEPS.map((step, i) => (
                                 <Reveal key={step.name} delay={0.06 * i} className="h-full">
                                     <div className="flex h-full flex-col bg-card p-5">
-                                        <span className="font-display text-4xl font-bold leading-none text-electric">
-                                            {String(i + 1).padStart(2, '0')}
-                                        </span>
-                                        <h3 className="mt-5 font-display text-base font-bold tracking-tight text-navy">
+                                        <h3 className="font-display text-base font-bold tracking-tight text-navy">
                                             {step.name}
                                         </h3>
                                         <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
@@ -821,9 +921,48 @@ export default function HomePage() {
                         </div>
                         <Reveal delay={0.2}>
                             <p className="mt-8 max-w-2xl font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-muted-foreground">
-                                Understand → Plan → Engineer → Review → Deliver → Improve — applied to every
-                                engagement, from a single loadcase to a full program.
+                                Understand → Plan → Execute → Validate → Deliver — applied to every engagement, from a
+                                single loadcase to a full programme.
                             </p>
+                        </Reveal>
+                    </div>
+                </section>
+
+                {/* DELIVERY MODEL */}
+                <section id="delivery" className="bg-background">
+                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+                        <Reveal>
+                            <SectionHeader
+                                label="Delivery Model"
+                                title="Flexible collaboration across Europe and India"
+                                description="A structured customer interface paired with practical engineering execution. The model adapts to the scope, team and review rhythm of each engagement."
+                            />
+                        </Reveal>
+                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+                            {DELIVERY_MODELS.map((model, i) => (
+                                <Reveal key={model.name} delay={0.06 * i} className="h-full">
+                                    <article className="flex h-full flex-col bg-card p-6 lg:p-7">
+                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
+                                            {model.name}
+                                        </h3>
+                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{model.detail}</p>
+                                    </article>
+                                </Reveal>
+                            ))}
+                        </div>
+                        <Reveal delay={0.2}>
+                            <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-3">
+                                {[
+                                    ['Europe', 'Customer interface · Requirements · Coordination'],
+                                    ['CAXPERTS', 'Methods · Reviews · Technical communication'],
+                                    ['India', 'CAE execution · Modelling · Automation · Reporting'],
+                                ].map(([label, detail]) => (
+                                    <div key={label} className="bg-card px-5 py-5">
+                                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-electric">{label}</p>
+                                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{detail}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </Reveal>
                     </div>
                 </section>
@@ -860,9 +999,6 @@ export default function HomePage() {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <p className="mt-6 font-mono text-[10px] tracking-[0.2em] text-white/30">
-                                            Q.0{gi + 1}
-                                        </p>
                                     </div>
                                 </Reveal>
                             ))}
@@ -884,7 +1020,8 @@ export default function HomePage() {
                             {CASE_STUDIES.map((study, i) => (
                                 <Reveal key={study.tag} delay={0.08 * i} className="h-full">
                                     <article className="flex h-full flex-col border border-border bg-card">
-                                        <figure>
+                                        <figure className="relative">
+                                            <AiImageBadge />
                                             <img
                                                 src={study.image}
                                                 alt={study.caption}
@@ -893,7 +1030,7 @@ export default function HomePage() {
                                             />
                                             <figcaption className="flex items-center justify-between border-t border-border px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                                                 <span>
-                                                    {study.figure} — {study.caption}
+                                                    {study.caption}
                                                 </span>
                                             </figcaption>
                                         </figure>
@@ -936,8 +1073,8 @@ export default function HomePage() {
                             <SectionHeader
                             dark
                                 label="Contact"
-                                title="Discuss your requirement"
-                                description="Tell us about your program, component or engineering challenge. We respond to every enquiry with a technical point of view — not a sales script."
+                                title="Discuss your engineering requirement"
+                                description="Tell us about your programme, component or engineering challenge. We respond with a technical point of view and a clear next step."
                             />
                         </Reveal>
                         <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-14">

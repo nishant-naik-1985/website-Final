@@ -122,6 +122,8 @@ $email = trimField($json['email'] ?? '', 254);
 $company = trimField($json['company'] ?? '', 150);
 $phone = trimField($json['phone'] ?? '', 50);
 $interest = trimField($json['interest'] ?? '', 100);
+$industry = trimField($json['industry'] ?? '', 100);
+$timeline = trimField($json['timeline'] ?? '', 100);
 $message = trimField($json['message'] ?? '', 5000);
 
 if ($name === '') {
@@ -167,7 +169,7 @@ $mail->setFrom($config['from_email'], $config['from_name']);
 $mail->addAddress($config['to_email'], $config['from_name']);
 $mail->addReplyTo($email, $name);
 $mail->Subject = 'Website enquiry: ' . $name . ' (' . $company . ')';
-$mail->Body = "Name: {$name}\nCompany: {$company}\nEmail: {$email}\nPhone: " . ($phone !== '' ? $phone : 'Not provided') . "\nArea of interest: " . ($interest !== '' ? $interest : 'Not provided') . "\n\nMessage:\n{$message}";
+$mail->Body = "Name: {$name}\nCompany: {$company}\nEmail: {$email}\nPhone: " . ($phone !== '' ? $phone : 'Not provided') . "\nIndustry: " . ($industry !== '' ? $industry : 'Not provided') . "\nService required: " . ($interest !== '' ? $interest : 'Not provided') . "\nExpected timeline: " . ($timeline !== '' ? $timeline : 'Not provided') . "\n\nProject description:\n{$message}";
 $mail->AltBody = $mail->Body;
 
 try {

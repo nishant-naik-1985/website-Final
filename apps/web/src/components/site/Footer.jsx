@@ -3,10 +3,12 @@ import { MapPin } from 'lucide-react';
 
 const EXPLORE_LINKS = [
     { label: 'About', href: '#about' },
+    { label: 'Why CAXPERTS', href: '#why-caxperts' },
     { label: 'Services', href: '#services' },
     { label: 'Capabilities', href: '#capabilities' },
     { label: 'Industries', href: '#industries' },
     { label: 'How We Work', href: '#process' },
+    { label: 'Delivery Model', href: '#delivery' },
     { label: 'Quality', href: '#quality' },
     { label: 'Case Studies', href: '#case-studies' },
 ];
@@ -82,6 +84,12 @@ export default function SiteFooter() {
                             <br />
                             Pune, Maharashtra, India
                         </p>
+                        <a
+                            href="mailto:info@caxperts-engineering.com"
+                            className="mt-3 inline-block text-sm text-white/70 transition-colors hover:text-electric"
+                        >
+                            info@caxperts-engineering.com
+                        </a>
                         <a
                             href="#contact"
                             className="mt-5 inline-flex items-center gap-2 border border-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"

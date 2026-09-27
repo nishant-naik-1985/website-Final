@@ -77,10 +77,7 @@ class PHPMailer
         $headers[] = 'Content-Type: text/plain; charset=UTF-8';
         $headers[] = 'Content-Transfer-Encoding: base64';
 
-        $body = $this->Body;
-        if ($this->AltBody !== '') {
-            $body .= "\r\n\r\n" . $this->AltBody;
-        }
+        $body = chunk_split(base64_encode($this->Body), 76, "\r\n");
 
         return implode("\r\n", $headers) . "\r\n\r\n" . $body;
     }

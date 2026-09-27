@@ -9,7 +9,6 @@ const EXPLORE_LINKS = [
     { label: 'How We Work', href: '#process' },
     { label: 'Quality', href: '#quality' },
     { label: 'Case Studies', href: '#case-studies' },
-    { label: 'Leadership', href: '#leadership' },
 ];
 
 const SERVICE_LINKS = [

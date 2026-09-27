@@ -194,12 +194,6 @@ const CASE_STUDIES = [
     },
 ];
 
-const LEADERS = [
-    { name: 'Medha Naik', initials: 'MN' },
-    { name: 'Nilam Kadam', initials: 'NK' },
-    { name: 'Samar Kadam', initials: 'SK' },
-];
-
 const INTEREST_OPTIONS = [
     { value: 'cae-simulation', label: 'CAE & Simulation' },
     { value: 'cad-engineering', label: 'CAD & Engineering' },
@@ -929,39 +923,6 @@ export default function HomePage() {
                                             </p>
                                         </div>
                                     </article>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* LEADERSHIP — 08 */}
-                <section id="leadership" className="tech-grid bg-secondary/60">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Leadership"
-                                title="The team behind CAxperts"
-                                description="CAxperts is led by practising engineers who stay close to the work — reviewing models, methods and deliverables first-hand."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-3">
-                            {LEADERS.map((leader, i) => (
-                                <Reveal key={leader.name} delay={0.08 * i} className="h-full">
-                                    <div className="flex h-full flex-col items-start bg-card p-8">
-                                        <span className="flex h-16 w-16 items-center justify-center bg-navy font-display text-xl font-bold text-white">
-                                            {leader.initials}
-                                        </span>
-                                        <h3 className="mt-6 font-display text-xl font-bold tracking-tight text-navy">
-                                            {leader.name}
-                                        </h3>
-                                        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                                            Leadership — CAxperts Engineering
-                                        </p>
-                                        <span className="mt-6 font-display text-4xl font-bold leading-none text-navy/10">
-                                            L.0{i + 1}
-                                        </span>
-                                    </div>
                                 </Reveal>
                             ))}
                         </div>

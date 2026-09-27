@@ -177,7 +177,6 @@ const QUALITY_ITEMS = [
 const CASE_STUDIES = [
     {
         image: CASE_CRASH_IMAGE,
-        figure: 'Fig. 03',
         caption: 'Full-vehicle crash simulation study',
         tag: 'Crash & Occupant Safety',
         title: 'Passenger vehicle crash & occupant safety program',
@@ -188,7 +187,6 @@ const CASE_STUDIES = [
     },
     {
         image: CASE_STRUCTURAL_IMAGE,
-        figure: 'Fig. 04',
         caption: 'Structural stress contour review',
         tag: 'Structural & Durability',
         title: 'Structural & durability assessment for heavy machinery',
@@ -199,7 +197,6 @@ const CASE_STUDIES = [
     },
     {
         image: CASE_AUTOMATION_IMAGE,
-        figure: 'Fig. 05',
         caption: 'Scripted CAE workflow automation',
         tag: 'CAE Automation',
         title: 'Automation of a repetitive crash-simulation workflow',
@@ -665,7 +662,7 @@ export default function HomePage() {
                                     loading="eager"
                                 />
                                 <figcaption className="flex items-center justify-between border-t border-white/15 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-                                    <span>Fig. 01 — Finite element mesh study, body-in-white</span>
+                                    <span>Finite element mesh study, body-in-white</span>
                                     <span className="hidden sm:inline">CAxperts / CAE</span>
                                 </figcaption>
                             </figure>
@@ -732,7 +729,7 @@ export default function HomePage() {
                                         loading="lazy"
                                     />
                                     <figcaption className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                                        <span>Fig. 02 — Engineering review, Pune studio</span>
+                                        <span>Engineering review, Pune studio</span>
                                         <span className="hidden sm:inline">CAxperts / CAD</span>
                                     </figcaption>
                                 </figure>
@@ -1057,7 +1054,7 @@ export default function HomePage() {
                                             />
                                             <figcaption className="flex items-center justify-between border-t border-border px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                                                 <span>
-                                                    {study.figure} — {study.caption}
+                                                    {study.caption}
                                                 </span>
                                             </figcaption>
                                         </figure>

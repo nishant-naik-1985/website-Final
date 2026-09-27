@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { createLogger, defineConfig } from 'vite';
 import inlineEditPlugin from './plugins/visual-editor/vite-plugin-react-inline-editor.js';
@@ -371,7 +372,22 @@ logger.error = (msg, options) => {
 	loggerError(msg, options);
 }
 
+function copyPublicDirPlugin() {
+	return {
+		name: 'copy-public-dir',
+		apply: 'build',
+		closeBundle() {
+			const sourcePublicDir = path.resolve(__dirname, 'public');
+			const outputDir = path.resolve(__dirname, 'dist');
+			if (!fs.existsSync(sourcePublicDir)) return;
+			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+			fs.cpSync(sourcePublicDir, outputDir, { recursive: true, force: true });
+		},
+	};
+}
+
 export default defineConfig({
+	publicDir: 'public',
 	optimizeDeps: {
 		include: allDeps,
 	},
@@ -379,7 +395,8 @@ export default defineConfig({
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin(), sitePagesPlugin(), pocketbaseAuthPlugin(), sessionJournalPlugin()] : []),
 		react(),
-		addTransformIndexHtml
+		addTransformIndexHtml,
+		copyPublicDirPlugin()
 	],
 	server: {
 		port: 3000,
@@ -406,6 +423,8 @@ export default defineConfig({
 		},
 	},
 	build: {
+		outDir: 'dist',
+		emptyOutDir: true,
 		rollupOptions: {
 			external: [
 				'@babel/parser',

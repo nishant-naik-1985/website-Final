@@ -23,7 +23,6 @@ import {
 import Reveal from '@/components/Reveal';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
-import pb from '@/lib/pocketbaseClient';
 import {
     Select,
     SelectContent,
@@ -211,7 +210,9 @@ const INTEREST_OPTIONS = [
     { value: 'other', label: 'Other' },
 ];
 
-const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '' };
+// `website` is a honeypot: real visitors never see or fill this field (it's
+// hidden off-screen below). A non-empty value means a bot filled it.
+const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', message: '', website: '' };
 
 function SectionHeader({ label, title, description, dark = false }) {
     return (
@@ -245,25 +246,77 @@ function EnquiryForm() {
     const [errorMessage, setErrorMessage] = useState('');
 
     const updateField = (field) => (event) => {
+        if (field === 'phone') {
+            const rawValue = event.target.value;
+            const sanitized = rawValue.replace(/[\u202A-\u202E]/g, '').replace(/[^+\d()\s-]/g, '');
+            setForm((prev) => ({ ...prev, [field]: sanitized }));
+            return;
+        }
+
         setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!form.interest) {
+
+        const name = form.name.trim();
+        const email = form.email.trim();
+        const message = form.message.trim();
+        const trimmedPhone = form.phone.trim();
+
+        if (!name || !email || !message) {
             setStatus('error');
-            setErrorMessage('Please select your area of interest.');
+            setErrorMessage('Please fill in your name, email, and message.');
             return;
         }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setStatus('error');
+            setErrorMessage('Please provide a valid email address.');
+            return;
+        }
+
+        if (trimmedPhone && !/^\+?[0-9()\s-]{7,20}$/.test(trimmedPhone)) {
+            setStatus('error');
+            setErrorMessage('Please enter a valid phone number with an international country code if needed.');
+            return;
+        }
+
         setStatus('submitting');
         setErrorMessage('');
         try {
-            await pb.collection('enquiries').create({ ...form });
+            const response = await fetch('/api/contact.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    company: form.company.trim(),
+                    email,
+                    phone: trimmedPhone,
+                    message,
+                    interest: form.interest,
+                    website: form.website,
+                }),
+            });
+
+            const body = await response.json().catch(() => null);
+            if (!response.ok || !body?.ok) {
+                if (response.status === 429) {
+                    setErrorMessage(body?.error || 'Too many submissions. Please try again later.');
+                } else if (response.status === 503) {
+                    setErrorMessage(body?.error || 'Email service is not configured. Please email info@caxperts-engineering.com directly.');
+                } else {
+                    setErrorMessage(body?.error || 'Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
+                }
+                setStatus('error');
+                return;
+            }
+
             setStatus('success');
             setForm(EMPTY_FORM);
         } catch (err) {
             setStatus('error');
-            setErrorMessage('Something went wrong while submitting your enquiry. Please try again.');
+            setErrorMessage('Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
         }
     };
 
@@ -344,17 +397,19 @@ function EnquiryForm() {
                     </label>
                     <input
                         id="enquiry-phone"
-                        type="tel"
-                        maxLength={40}
+                        type="text"
+                        inputMode="tel"
+                        autoComplete="tel"
                         value={form.phone}
                         onChange={updateField('phone')}
-                        placeholder="+91 ..."
+                        placeholder="+1 555 123 4567"
                         className={inputClass}
+                        pattern="^[+()0-9\\s-]{7,20}$"
                     />
                 </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="enquiry-interest" className={labelClass}>
-                        Area of Interest *
+                        Area of Interest
                     </label>
                     <Select
                         value={form.interest}
@@ -396,12 +451,23 @@ function EnquiryForm() {
                 </div>
             </div>
 
-            {status === 'error' && (
-                <p className="mt-5 flex items-center gap-2 border border-red-400/40 bg-red-400/10 px-3.5 py-3 text-sm text-red-200">
-                    <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                    {errorMessage}
-                </p>
-            )}
+            {/* Honeypot — hidden from real visitors and screen readers; bots that
+                fill every field will trip it. */}
+            <div
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', top: 0, width: 1, height: 1, overflow: 'hidden' }}
+            >
+                <label htmlFor="enquiry-website">Website</label>
+                <input
+                    id="enquiry-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={updateField('website')}
+                />
+            </div>
 
             <button
                 type="submit"
@@ -420,8 +486,8 @@ function EnquiryForm() {
                     </>
                 )}
             </button>
-            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/40">
-                Submissions are handled under NDA on request and processed in line with GDPR principles.
+            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/60">
+                For enquiries: <a href="mailto:info@caxperts-engineering.com" className="text-electric underline-offset-2 hover:underline">info@caxperts-engineering.com</a>
             </p>
         </form>
     );

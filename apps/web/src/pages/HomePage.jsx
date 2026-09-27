@@ -3,10 +3,8 @@ import { Helmet } from 'react-helmet';
 import {
     Activity,
     DraftingCompass,
-    Mail,
     Layers,
     LineChart,
-    Phone,
     Workflow,
     Users,
     Car,
@@ -23,72 +21,115 @@ import {
     AlertCircle,
 } from 'lucide-react';
 import Reveal from '@/components/Reveal';
-        'w-full rounded-xl border border-[#d4d8dc] bg-[#f8f9fa] px-4 py-3.5 text-base text-[#1f2937] placeholder:text-[#6b7280] outline-none transition-colors focus:border-[#f59e0b] focus:ring-2 focus:ring-[#f59e0b]/20';
-    const labelClass = 'mb-2 block text-[15px] font-semibold text-[#171f2a]';
+import SiteHeader from '@/components/site/Header';
+import SiteFooter from '@/components/site/Footer';
 import {
     Select,
-        <form onSubmit={handleSubmit} className="w-full" noValidate={false}>
-            <div className="space-y-5">
-                <div>
-                    <label htmlFor="enquiry-name" className={labelClass}>
-                        Name <span className="text-[#f97316]">*</span>
-                    </label>
-                    <input
-                        id="enquiry-name"
-                        type="text"
-                        required
-                        maxLength={200}
-                        value={form.name}
-                        onChange={updateField('name')}
-                        placeholder="Your full name"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-email" className={labelClass}>
-                        Email <span className="text-[#f97316]">*</span>
-                    </label>
-                    <input
-                        id="enquiry-email"
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={updateField('email')}
-                        placeholder="your.email@example.com"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-company" className={labelClass}>
-                        Subject <span className="text-[#f97316]">*</span>
-                    </label>
-                    <input
-                        id="enquiry-company"
-                        type="text"
-                        required
-                        maxLength={200}
-                        value={form.company}
-                        onChange={updateField('company')}
-                        placeholder="What is this regarding?"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-message" className={labelClass}>
-                        Message <span className="text-[#f97316]">*</span>
-                    </label>
-                    <textarea
-                        id="enquiry-message"
-                        required
-                        rows={6}
-                        maxLength={5000}
-                        value={form.message}
-                        onChange={updateField('message')}
-                        placeholder="Tell us more about your inquiry..."
-                        className={`${inputClass} min-h-[160px] resize-y`}
-                    />
-                </div>
-            </div>
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+
+const HERO_IMAGE = 'https://images.hostinger.com/cf164097-67c4-40f2-8a60-a14114e849ba.png';
+const ABOUT_IMAGE = 'https://images.hostinger.com/67362f6f-7741-4dad-bb9d-36896c181121.png';
+const CASE_CRASH_IMAGE = 'https://images.hostinger.com/18523841-866b-4851-8e2f-900c694fe4cc.png';
+const CASE_STRUCTURAL_IMAGE = 'https://images.hostinger.com/a557888b-0823-4d5a-9ce4-32b78bd18bc5.png';
+const CASE_AUTOMATION_IMAGE = 'https://images.hostinger.com/37c35307-550d-41be-9326-0f4f57ad6875.png';
+
+const SERVICES = [
+    {
+        icon: Activity,
+        title: 'CAE & Simulation',
+        description:
+            'Structural, crash and safety simulation across the product development cycle — from concept studies to validation support.',
+    },
+    {
+        icon: DraftingCompass,
+        title: 'CAD & Engineering',
+        description:
+            '3D modelling, detailed design and engineering drawings built for downstream simulation and manufacturing.',
+    },
+    {
+        icon: Layers,
+        title: 'Pre/Post Processing',
+        description:
+            'High-quality meshing, model assembly and results post-processing with ANSA, META and HyperMesh workflows.',
+    },
+    {
+        icon: LineChart,
+        title: 'Engineering Consulting',
+        description:
+            'Simulation strategy, method development and independent design reviews for automotive and industrial programs.',
+    },
+    {
+        icon: Workflow,
+        title: 'Digital Engineering & Automation',
+        description:
+            'Python and MATLAB based automation of repetitive CAE tasks — model checks, deck preparation and reporting.',
+    },
+    {
+        icon: Users,
+        title: 'Resource Augmentation',
+        description:
+            'Skilled CAE and CAD engineers embedded with customer teams to extend in-house engineering capacity.',
+    },
+];
+
+const CAPABILITY_GROUPS = [
+    {
+        status: 'Core',
+        statusClass: 'bg-electric text-white',
+        note: 'Delivered today as a primary practice area.',
+        items: ['Structural Analysis', 'Crash & Safety', 'Seats & Restraints', 'Pedestrian Safety'],
+    },
+    {
+        status: 'Available',
+        statusClass: 'border border-electric/60 text-electric',
+        note: 'Available as part of current engagements.',
+        items: ['Durability', 'Optimisation', 'CAE Automation', 'CAD'],
+    },
+    {
+        status: 'Planned',
+        statusClass: 'border border-white/25 text-white/60',
+        note: 'Roadmap capabilities — not currently delivered.',
+        items: ['NVH', 'Thermal', 'CFD'],
+    },
+];
+
+const TOOLS = [
+    'ANSA',
+    'META',
+    'HyperMesh',
+    'LS-DYNA',
+    'Pam-Crash',
+    'Abaqus',
+    'OptiStruct',
+    'CATIA',
+    'Siemens NX',
+    'SolidWorks',
+    'Creo',
+    'Python',
+    'MATLAB',
+];
+
+const INDUSTRIES = [
+    { icon: Car, name: 'Automotive', detail: 'Body, chassis, closures, seating and restraint systems.' },
+    { icon: Tractor, name: 'Heavy Machinery', detail: 'Structures, brackets and load-bearing assemblies.' },
+    { icon: Bot, name: 'Automation & Robotics', detail: 'Frames, end-effectors and motion system structures.' },
+    { icon: Wind, name: 'Renewable Energy', detail: 'Structural assessment of energy system components.' },
+    { icon: Plane, name: 'Aerospace & Defence', detail: 'Lightweight structures and safety-critical analysis.' },
+    { icon: HeartPulse, name: 'Medical / Biomechanical', detail: 'Device structures and biomechanical simulation.' },
+];
+
+const PROCESS_STEPS = [
+    { name: 'Understand', detail: 'Requirements, constraints, regulations and success criteria are captured up front.' },
+    { name: 'Plan', detail: 'Scope, methods, tools and deliverables are defined with clear review points.' },
+    { name: 'Engineer', detail: 'Models are built, analysed and iterated by specialist CAE and CAD engineers.' },
+    { name: 'Review', detail: 'Results are checked against requirements and discussed with your team.' },
+    { name: 'Deliver', detail: 'Documented models, reports and design proposals are handed over on schedule.' },
+    { name: 'Improve', detail: 'Feedback feeds method refinement for the next loop of development.' },
+];
 
 const QUALITY_ITEMS = [
     {
@@ -431,7 +472,7 @@ function EnquiryForm() {
             <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#f59e0b] px-6 py-4 text-base font-semibold text-white shadow-[0_8px_20px_rgba(245,158,11,0.3)] transition-all hover:bg-[#ea8a00] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 bg-electric px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
                 {status === 'submitting' ? (
                     <>
@@ -440,11 +481,14 @@ function EnquiryForm() {
                     </>
                 ) : (
                     <>
-                        Send Message
-                        <ArrowRight className="h-4 w-4" strokeWidth={2} />
+                        Submit Enquiry
+                        <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
                     </>
                 )}
             </button>
+            <p className="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-white/60">
+                For enquiries: <a href="mailto:info@caxperts-engineering.com" className="text-electric underline-offset-2 hover:underline">info@caxperts-engineering.com</a>
+            </p>
         </form>
     );
 }
@@ -928,69 +972,56 @@ export default function HomePage() {
                 </section>
 
                 {/* CONTACT — 09 */}
-                <section id="contact" className="bg-[#f5f5f5] text-[#1f2937]">
-                    <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-10 lg:py-20">
-                        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-                            <Reveal delay={0.1} className="w-full">
-                                <div className="rounded-[18px] border border-[#dfe3e7] bg-[#f7f7f7] p-5 sm:p-8">
-                                    <h2 className="mb-8 text-4xl font-extrabold tracking-[-0.04em] text-[#171f2a] sm:text-[3rem]">
-                                        Send Us a Message
-                                    </h2>
-                                    <EnquiryForm />
-                                </div>
-                            </Reveal>
-
-                            <Reveal delay={0.2} className="w-full">
-                                <div className="pt-1">
-                                    <h2 className="mb-5 text-4xl font-extrabold tracking-[-0.04em] text-[#171f2a] sm:text-[2.8rem]">
-                                        Contact Information
-                                    </h2>
-                                    <p className="max-w-[640px] text-lg leading-relaxed text-[#4b5563]">
-                                        Whether you&apos;re interested in joining our community, have questions about our events,
-                                        or want to get involved, we&apos;re here to help. Reach out to us through any of the
-                                        following channels.
-                                    </p>
-
-                                    <div className="mt-8 space-y-5">
-                                        <div className="flex items-center gap-4 rounded-[18px] border border-[#dfe3e7] bg-[#f7f7f7] p-5 shadow-sm">
-                                            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#f9e7d2] text-[#f59e0b]">
-                                                <Mail className="h-7 w-7" strokeWidth={1.8} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[2rem] font-bold tracking-[-0.03em] text-[#171f2a]">Email</p>
-                                                <a href="mailto:info@caxperts-engineering.com" className="mt-1 block text-xl text-[#1f2937] hover:text-[#f59e0b]">
-                                                    info@caxperts-engineering.com
-                                                </a>
-                                            </div>
+                <section id="contact" className="tech-grid-dark bg-navy">
+                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+                        <Reveal>
+                            <SectionHeader
+                            dark
+                                label="Contact"
+                                title="Discuss your requirement"
+                                description="Tell us about your program, component or engineering challenge. We respond to every enquiry with a technical point of view — not a sales script."
+                            />
+                        </Reveal>
+                        <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-14">
+                            <Reveal delay={0.1} className="lg:col-span-2">
+                                <div className="flex h-full flex-col">
+                                    <div className="space-y-px border border-white/15 bg-white/15">
+                                        <div className="bg-navy p-5">
+                                            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                                <MapPin className="h-3.5 w-3.5 text-electric" strokeWidth={1.75} />
+                                                Office
+                                            </p>
+                                            <p className="mt-2 font-display text-lg font-semibold text-white">
+                                                Pune, Maharashtra, India
+                                            </p>
                                         </div>
-
-                                        <div className="flex items-center gap-4 rounded-[18px] border border-[#dfe3e7] bg-[#f7f7f7] p-5 shadow-sm">
-                                            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#f9e7d2] text-[#f59e0b]">
-                                                <Phone className="h-7 w-7" strokeWidth={1.8} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[2rem] font-bold tracking-[-0.03em] text-[#171f2a]">Phone</p>
-                                                <a href="tel:+9195213244341" className="mt-1 block text-xl text-[#1f2937] hover:text-[#f59e0b]">
-                                                    +49 1521 324 4341
-                                                </a>
-                                            </div>
+                                        <div className="bg-navy p-5">
+                                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                                Engagement Models
+                                            </p>
+                                            <p className="mt-2 text-sm leading-relaxed text-white/75">
+                                                Fixed-scope projects · Time & material · Dedicated engineering
+                                                resources
+                                            </p>
                                         </div>
-
-                                        <div className="flex items-center gap-4 rounded-[18px] border border-[#dfe3e7] bg-[#f7f7f7] p-5 shadow-sm">
-                                            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#f9e7d2] text-[#f59e0b]">
-                                                <MapPin className="h-7 w-7" strokeWidth={1.8} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[2rem] font-bold tracking-[-0.03em] text-[#171f2a]">Location</p>
-                                                <p className="mt-1 text-xl text-[#1f2937]">Langen, Germany</p>
-                                            </div>
+                                        <div className="bg-navy p-5">
+                                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                                Confidentiality
+                                            </p>
+                                            <p className="mt-2 text-sm leading-relaxed text-white/75">
+                                                NDA available on request before any technical discussion.
+                                            </p>
                                         </div>
                                     </div>
-
-                                    <h3 className="mt-12 text-4xl font-extrabold tracking-[-0.04em] text-[#171f2a] sm:text-[2.8rem]">
-                                        Connect on Social Media
-                                    </h3>
+                                    <p className="mt-8 font-display text-2xl font-bold leading-snug tracking-tight text-white/90 lg:text-3xl">
+                                        Engineering Intelligence.
+                                        <br />
+                                        <span className="text-electric">Simulation Excellence.</span>
+                                    </p>
                                 </div>
+                            </Reveal>
+                            <Reveal delay={0.2} className="lg:col-span-3">
+                                <EnquiryForm />
                             </Reveal>
                         </div>
                     </div>

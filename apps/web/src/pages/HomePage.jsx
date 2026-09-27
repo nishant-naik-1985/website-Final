@@ -752,10 +752,7 @@ export default function HomePage() {
                             {WHY_ITEMS.map((item, i) => (
                                 <Reveal key={item.title} delay={0.06 * i} className="h-full">
                                     <article className="flex h-full flex-col bg-card p-6 lg:p-7">
-                                        <span className="font-mono text-[10px] tracking-[0.2em] text-electric">
-                                            W.{String(i + 1).padStart(2, '0')}
-                                        </span>
-                                        <h3 className="mt-8 font-display text-lg font-bold leading-snug tracking-tight text-navy">
+                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
                                             {item.title}
                                         </h3>
                                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
@@ -786,11 +783,8 @@ export default function HomePage() {
                                                 strokeWidth={1.5}
                                                 aria-hidden="true"
                                             />
-                                            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground group-hover:text-white/40">
-                                                S.0{i + 1}
-                                            </span>
                                         </div>
-                                        <h3 className="mt-6 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
+                                        <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
                                             {service.title}
                                         </h3>
                                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-hover:text-white/65">
@@ -824,9 +818,6 @@ export default function HomePage() {
                                             >
                                                 {group.status}
                                             </span>
-                                            <span className="font-mono text-[10px] tracking-[0.2em] text-white/30">
-                                                C.0{gi + 1}
-                                            </span>
                                         </div>
                                         <ul className="mt-6 flex-1 divide-y divide-white/10 border-y border-white/10">
                                             {group.items.map((item) => (
@@ -853,12 +844,9 @@ export default function HomePage() {
                                     Toolchain — Solvers · Pre/Post · CAD · Scripting
                                 </p>
                                 <div className="grid grid-cols-2 gap-px bg-white/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                                    {TOOLS.map((tool, i) => (
+                                    {TOOLS.map((tool) => (
                                         <div key={tool} className="bg-navy px-4 py-4">
-                                            <p className="font-mono text-[9px] tracking-[0.2em] text-white/30">
-                                                T.{String(i + 1).padStart(2, '0')}
-                                            </p>
-                                            <p className="mt-1 font-mono text-sm font-medium text-white/85">{tool}</p>
+                                            <p className="font-mono text-sm font-medium text-white/85">{tool}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -881,9 +869,6 @@ export default function HomePage() {
                             {INDUSTRIES.map((industry, i) => (
                                 <Reveal key={industry.name} delay={0.06 * i} className="h-full">
                                     <div className="flex h-full items-start gap-5 bg-card p-6 lg:p-7">
-                                        <span className="font-display text-3xl font-bold leading-none text-navy/10">
-                                            {String(i + 1).padStart(2, '0')}
-                                        </span>
                                         <div>
                                             <industry.icon
                                                 className="h-5 w-5 text-electric"
@@ -917,10 +902,7 @@ export default function HomePage() {
                             {PROCESS_STEPS.map((step, i) => (
                                 <Reveal key={step.name} delay={0.06 * i} className="h-full">
                                     <div className="flex h-full flex-col bg-card p-5">
-                                        <span className="font-display text-4xl font-bold leading-none text-electric">
-                                            {String(i + 1).padStart(2, '0')}
-                                        </span>
-                                        <h3 className="mt-5 font-display text-base font-bold tracking-tight text-navy">
+                                        <h3 className="font-display text-base font-bold tracking-tight text-navy">
                                             {step.name}
                                         </h3>
                                         <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
@@ -960,10 +942,7 @@ export default function HomePage() {
                             {DELIVERY_MODELS.map((model, i) => (
                                 <Reveal key={model.name} delay={0.06 * i} className="h-full">
                                     <article className="flex h-full flex-col bg-card p-6 lg:p-7">
-                                        <span className="font-display text-4xl font-bold leading-none text-electric">
-                                            {String(i + 1).padStart(2, '0')}
-                                        </span>
-                                        <h3 className="mt-6 font-display text-lg font-bold leading-snug tracking-tight text-navy">
+                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
                                             {model.name}
                                         </h3>
                                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{model.detail}</p>
@@ -1020,9 +999,6 @@ export default function HomePage() {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <p className="mt-6 font-mono text-[10px] tracking-[0.2em] text-white/30">
-                                            Q.0{gi + 1}
-                                        </p>
                                     </div>
                                 </Reveal>
                             ))}

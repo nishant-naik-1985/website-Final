@@ -18,11 +18,11 @@ export default function SiteHeader() {
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-navy-deep/95 backdrop-blur-sm">
             <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-10">
-                <a href="#home" className="flex h-10 w-44 items-center overflow-hidden sm:w-52" aria-label="CAxperts Engineering home">
+                <a href="#home" className="flex h-14 w-64 items-center overflow-hidden sm:w-80" aria-label="CAxperts Engineering home">
                     <img
                         src="/CAxperts-logo-black-bg.png"
                         alt="CAxperts Engineering Pvt. Ltd."
-                        className="h-full w-full object-contain"
+                        className="h-full w-full scale-[1.6] object-contain"
                     />
                 </a>
 

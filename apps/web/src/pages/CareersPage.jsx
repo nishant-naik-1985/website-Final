@@ -68,6 +68,37 @@ const JOBS = [
             'Python or MATLAB scripting for CAE automation.',
         ],
     },
+    {
+        id: 'business-development-cae-services',
+        title: 'Business Development Manager — CAE Services',
+        location: 'Pune, India (Hybrid)',
+        type: 'Full-time',
+        experience: '3–6 years',
+        summary:
+            'We are looking for a Business Development Manager to grow our CAE and engineering services business — finding new clients and projects in India and internationally, and building long-term relationships with engineering teams at OEMs and suppliers.',
+        responsibilities: [
+            'Identify and qualify new clients and projects for CAE, CAD and engineering services in India and international markets, especially Europe.',
+            'Build a pipeline of prospects among automotive OEMs, Tier-1 suppliers and industrial manufacturers.',
+            'Generate leads through networking, LinkedIn, industry events, trade fairs and direct outreach.',
+            'Understand customer engineering requirements and work with our technical team on scope, effort estimates and proposals.',
+            'Prepare and present capability presentations, proposals and commercial offers; negotiate and close engagements.',
+            'Grow existing accounts and maintain long-term relationships with customer engineering and purchasing teams.',
+            'Track market trends, competitors and opportunities, and report on pipeline and sales performance.',
+        ],
+        requirements: [
+            'Degree in Mechanical, Automobile or a related engineering discipline; an MBA is an advantage.',
+            '3–6 years of business development or sales experience in CAE, CAD or engineering services.',
+            'Good understanding of CAE and simulation services — crash, structural, durability and pre/post processing.',
+            'Proven track record of winning new clients and projects.',
+            'Network of contacts at automotive or industrial engineering organisations in India and/or abroad.',
+            'Excellent English communication, presentation and negotiation skills.',
+            'Willingness to travel within India and internationally.',
+        ],
+        niceToHave: [
+            'Experience selling engineering services to international customers.',
+            'Experience with CRM tools and structured pipeline management.',
+        ],
+    },
 ];
 
 const GENERAL_APPLICATION = 'General Application';
@@ -596,7 +627,7 @@ export default function CareersPage() {
                 <title>Careers | CAXPERTS Engineering</title>
                 <meta
                     name="description"
-                    content="Join CAXPERTS Engineering in Pune. Explore open CAE engineering roles in crash and safety simulation for automotive product development."
+                    content="Join CAXPERTS Engineering in Pune. Explore open roles in CAE crash and safety simulation and in business development for engineering services."
                 />
                 {JOBS.map((job) => (
                     <script key={job.id} type="application/ld+json">
@@ -626,7 +657,7 @@ export default function CareersPage() {
                 ))}
                 <Seo
                     title="Careers | CAXPERTS Engineering"
-                    description="Open CAE engineering roles at CAXPERTS Engineering, Pune."
+                    description="Open CAE engineering and business development roles at CAXPERTS Engineering, Pune."
                     siteName="CAXPERTS Engineering"
                 />
             </Helmet>
@@ -651,8 +682,8 @@ export default function CareersPage() {
                         <Reveal delay={0.2}>
                             <p className="mt-8 max-w-2xl leading-relaxed text-white/65">
                                 We are a Pune-based CAE and CAD engineering team working on crash, safety and structural
-                                programmes for automotive and industrial customers. If you enjoy building good models and
-                                understanding why structures behave the way they do, we would like to hear from you.
+                                programmes for automotive and industrial customers in India and abroad. Whether you build
+                                simulation models or build client relationships, we would like to hear from you.
                             </p>
                         </Reveal>
                         <Reveal delay={0.3}>
@@ -699,7 +730,7 @@ export default function CareersPage() {
                             <SectionHeader
                                 label="Open Positions"
                                 title="Current openings"
-                                description="All roles are based in our Pune office. Send your CV by email — we review every application and respond to shortlisted candidates."
+                                description="All roles are based in Pune. Apply online or send your CV by email — we review every application and respond to shortlisted candidates."
                             />
                         </Reveal>
                         <div className="mt-12 space-y-8">

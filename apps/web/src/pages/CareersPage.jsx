@@ -6,6 +6,7 @@ import {
     Mail,
     MapPin,
     Briefcase,
+    ChevronDown,
     Clock,
     Copy,
     Check,
@@ -558,13 +559,25 @@ function JobList({ heading, items }) {
 }
 
 function JobPosting({ job, onApply }) {
+    const [expanded, setExpanded] = useState(false);
+    const detailsId = `${job.id}-details`;
+    const toggle = () => setExpanded((prev) => !prev);
+
     return (
         <article id={job.id} className="scroll-mt-20 border border-border bg-card">
             <div className="flex flex-col gap-6 border-b border-border p-6 lg:flex-row lg:items-start lg:justify-between lg:p-8">
                 <div>
                     <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-electric">Open Position</p>
                     <h3 className="mt-3 font-display text-2xl font-bold leading-snug tracking-tight text-navy md:text-3xl">
-                        {job.title}
+                        <button
+                            type="button"
+                            onClick={toggle}
+                            aria-expanded={expanded}
+                            aria-controls={detailsId}
+                            className="text-left transition-colors hover:text-electric"
+                        >
+                            {job.title}
+                        </button>
                     </h3>
                     <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
                         <span className="flex items-center gap-2">
@@ -593,21 +606,44 @@ function JobPosting({ job, onApply }) {
 
             <div className="p-6 lg:p-8">
                 <p className="max-w-3xl leading-relaxed text-muted-foreground">{job.summary}</p>
-                <div className="mt-8 grid gap-10 lg:grid-cols-3">
-                    <JobList heading="Responsibilities" items={job.responsibilities} />
-                    <JobList heading="Requirements" items={job.requirements} />
-                    <JobList heading="Nice to Have" items={job.niceToHave} />
-                </div>
+                <button
+                    type="button"
+                    onClick={toggle}
+                    aria-expanded={expanded}
+                    aria-controls={detailsId}
+                    className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-electric transition-colors hover:text-navy"
+                >
+                    {expanded ? 'Hide job details' : 'View job details'}
+                    <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+                        strokeWidth={2}
+                    />
+                </button>
             </div>
 
-            <div className="flex flex-col gap-3 border-t border-border p-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                    Apply online with the form below, or email your CV to{' '}
-                    <a href={mailtoFor(job.title)} className="font-medium text-electric hover:underline">
-                        {CAREERS_EMAIL}
-                    </a>{' '}
-                    with the job title in the subject line.
-                </p>
+            {/* Rows animate from 0fr to 1fr so the panel opens to its natural height. */}
+            <div
+                id={detailsId}
+                className={`grid transition-[grid-template-rows] duration-300 ease-out ${expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                inert={expanded ? undefined : ''}
+            >
+                <div className="overflow-hidden">
+                    <div className="grid gap-10 border-t border-border p-6 lg:grid-cols-3 lg:p-8">
+                        <JobList heading="Responsibilities" items={job.responsibilities} />
+                        <JobList heading="Requirements" items={job.requirements} />
+                        <JobList heading="Nice to Have" items={job.niceToHave} />
+                    </div>
+
+                    <div className="border-t border-border p-6 lg:px-8">
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                            Apply online with the form below, or email your CV to{' '}
+                            <a href={mailtoFor(job.title)} className="font-medium text-electric hover:underline">
+                                {CAREERS_EMAIL}
+                            </a>{' '}
+                            with the job title in the subject line.
+                        </p>
+                    </div>
+                </div>
             </div>
         </article>
     );

@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { ArrowUpRight, Mail, MapPin, Briefcase, Clock } from 'lucide-react';
+import {
+    ArrowRight,
+    ArrowUpRight,
+    Mail,
+    MapPin,
+    Briefcase,
+    Clock,
+    Copy,
+    Check,
+    Loader2,
+    CheckCircle2,
+    FileText,
+    Upload,
+    X,
+} from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
 import Seo from '@/components/Seo';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 const CAREERS_EMAIL = 'info@caxperts-engineering.com';
 
@@ -49,10 +70,444 @@ const JOBS = [
     },
 ];
 
-function mailtoFor(job) {
-    const subject = `Application: ${job.title.replace('—', '-')}`;
+const GENERAL_APPLICATION = 'General Application';
+const POSITION_OPTIONS = [...JOBS.map((job) => job.title), GENERAL_APPLICATION];
+
+const MAX_CV_BYTES = 5 * 1024 * 1024;
+const CV_EXTENSIONS = ['pdf', 'doc', 'docx'];
+
+// `website` is a honeypot, as on the enquiry form: real visitors never see it.
+const EMPTY_APPLICATION = {
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    experience: '',
+    notice_period: '',
+    linkedin: '',
+    message: '',
+    website: '',
+};
+
+function mailtoFor(position) {
+    const subject = `Application: ${position.replace('—', '-')}`;
     const body = 'Dear CAxperts team,\n\nPlease find my CV attached for the above position.\n\nName:\nPhone:\nCurrent location:\nNotice period:\n';
     return `mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function formatFileSize(bytes) {
+    return bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function validateCv(file) {
+    const extension = file.name.split('.').pop().toLowerCase();
+    if (!CV_EXTENSIONS.includes(extension)) {
+        return 'Please upload your CV as a PDF or Word document (.pdf, .doc, .docx).';
+    }
+    if (file.size > MAX_CV_BYTES) {
+        return 'Your CV is too large. Please upload a file under 5 MB.';
+    }
+    return '';
+}
+
+function ApplicationForm({ position, onPositionChange }) {
+    const [form, setForm] = useState(EMPTY_APPLICATION);
+    const [cv, setCv] = useState(null);
+    const [status, setStatus] = useState('idle');
+    const [errorMessage, setErrorMessage] = useState('');
+    const fileInputRef = useRef(null);
+
+    const updateField = (field) => (event) => {
+        if (field === 'phone') {
+            const sanitized = event.target.value.replace(/[‪-‮]/g, '').replace(/[^+\d()\s-]/g, '');
+            setForm((prev) => ({ ...prev, phone: sanitized }));
+            return;
+        }
+
+        setForm((prev) => ({ ...prev, [field]: event.target.value }));
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const fileError = validateCv(file);
+        if (fileError) {
+            setCv(null);
+            event.target.value = '';
+            setStatus('error');
+            setErrorMessage(fileError);
+            return;
+        }
+
+        setCv(file);
+        if (status === 'error') {
+            setStatus('idle');
+            setErrorMessage('');
+        }
+    };
+
+    const clearFile = () => {
+        setCv(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const name = form.name.trim();
+        const email = form.email.trim();
+        const phone = form.phone.trim();
+        const linkedin = form.linkedin.trim();
+
+        if (!name || !email || !phone || !cv) {
+            setStatus('error');
+            setErrorMessage('Please fill in your name, email and phone number, and attach your CV.');
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setStatus('error');
+            setErrorMessage('Please provide a valid email address.');
+            return;
+        }
+
+        if (!/^\+?[0-9()\s-]{7,20}$/.test(phone)) {
+            setStatus('error');
+            setErrorMessage('Please enter a valid phone number, with country code if outside India.');
+            return;
+        }
+
+        if (linkedin && !/^https?:\/\/\S+$/i.test(linkedin)) {
+            setStatus('error');
+            setErrorMessage('Please enter your LinkedIn profile as a full URL, starting with https://');
+            return;
+        }
+
+        const payload = new FormData();
+        payload.append('position', position);
+        Object.entries(form).forEach(([field, value]) => payload.append(field, value.trim()));
+        payload.append('cv', cv);
+
+        setStatus('submitting');
+        setErrorMessage('');
+        try {
+            const response = await fetch('/api/apply.php', { method: 'POST', body: payload });
+            const body = await response.json().catch(() => null);
+
+            if (!response.ok || !body?.ok) {
+                setErrorMessage(
+                    body?.error ||
+                        `Something went wrong while sending your application. Please try again or email your CV to ${CAREERS_EMAIL}.`
+                );
+                setStatus('error');
+                return;
+            }
+
+            setStatus('success');
+            setForm(EMPTY_APPLICATION);
+            clearFile();
+        } catch (err) {
+            setStatus('error');
+            setErrorMessage(
+                `Something went wrong while sending your application. Please try again or email your CV to ${CAREERS_EMAIL}.`
+            );
+        }
+    };
+
+    if (status === 'success') {
+        return (
+            <div className="flex h-full min-h-[24rem] flex-col items-center justify-center border border-white/15 bg-white/[0.03] p-10 text-center" role="status" aria-live="polite">
+                <CheckCircle2 className="h-10 w-10 text-electric" strokeWidth={1.5} />
+                <p className="mt-5 font-display text-2xl font-bold text-white">Application received</p>
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
+                    Thank you for applying to CAxperts Engineering. We review every application and will contact
+                    shortlisted candidates.
+                </p>
+                <button
+                    type="button"
+                    onClick={() => setStatus('idle')}
+                    className="mt-8 border border-electric px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"
+                >
+                    Submit another application
+                </button>
+            </div>
+        );
+    }
+
+    const inputClass =
+        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-electric';
+    const labelClass = 'mb-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-white/55';
+
+    return (
+        <form onSubmit={handleSubmit} className="border border-white/15 bg-white/[0.03] p-6 sm:p-8">
+            <div className="grid gap-5 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                    <label htmlFor="apply-position" className={labelClass}>
+                        Position *
+                    </label>
+                    <Select value={position} onValueChange={onPositionChange}>
+                        <SelectTrigger
+                            id="apply-position"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 [&>svg]:text-white/50"
+                        >
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
+                            {POSITION_OPTIONS.map((option) => (
+                                <SelectItem key={option} value={option} className="text-sm focus:bg-electric focus:text-white">
+                                    {option}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <label htmlFor="apply-name" className={labelClass}>
+                        Full Name *
+                    </label>
+                    <input
+                        id="apply-name"
+                        type="text"
+                        required
+                        maxLength={150}
+                        autoComplete="name"
+                        value={form.name}
+                        onChange={updateField('name')}
+                        placeholder="Your full name"
+                        className={inputClass}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="apply-email" className={labelClass}>
+                        Email *
+                    </label>
+                    <input
+                        id="apply-email"
+                        type="email"
+                        required
+                        maxLength={254}
+                        autoComplete="email"
+                        value={form.email}
+                        onChange={updateField('email')}
+                        placeholder="you@example.com"
+                        className={inputClass}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="apply-phone" className={labelClass}>
+                        Phone *
+                    </label>
+                    <input
+                        id="apply-phone"
+                        type="text"
+                        required
+                        inputMode="tel"
+                        autoComplete="tel"
+                        value={form.phone}
+                        onChange={updateField('phone')}
+                        placeholder="+91 98765 43210"
+                        className={inputClass}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="apply-location" className={labelClass}>
+                        Current Location
+                    </label>
+                    <input
+                        id="apply-location"
+                        type="text"
+                        maxLength={150}
+                        value={form.location}
+                        onChange={updateField('location')}
+                        placeholder="City, Country"
+                        className={inputClass}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="apply-experience" className={labelClass}>
+                        Total Experience
+                    </label>
+                    <input
+                        id="apply-experience"
+                        type="text"
+                        maxLength={50}
+                        value={form.experience}
+                        onChange={updateField('experience')}
+                        placeholder="e.g. 2 years"
+                        className={inputClass}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="apply-notice" className={labelClass}>
+                        Notice Period
+                    </label>
+                    <input
+                        id="apply-notice"
+                        type="text"
+                        maxLength={100}
+                        value={form.notice_period}
+                        onChange={updateField('notice_period')}
+                        placeholder="e.g. 30 days, immediate"
+                        className={inputClass}
+                    />
+                </div>
+                <div className="sm:col-span-2">
+                    <label htmlFor="apply-linkedin" className={labelClass}>
+                        LinkedIn Profile
+                    </label>
+                    <input
+                        id="apply-linkedin"
+                        type="url"
+                        maxLength={300}
+                        value={form.linkedin}
+                        onChange={updateField('linkedin')}
+                        placeholder="https://www.linkedin.com/in/your-profile"
+                        className={inputClass}
+                    />
+                </div>
+                <div className="sm:col-span-2">
+                    <label htmlFor="apply-cv" className={labelClass}>
+                        CV / Resume * <span className="normal-case tracking-normal text-white/40">(PDF or Word, max 5 MB)</span>
+                    </label>
+                    {cv ? (
+                        <div className="flex items-center justify-between gap-3 border border-electric/60 bg-electric/10 px-3.5 py-3">
+                            <span className="flex min-w-0 items-center gap-2.5 text-sm text-white">
+                                <FileText className="h-4 w-4 shrink-0 text-electric" strokeWidth={1.75} />
+                                <span className="truncate">{cv.name}</span>
+                                <span className="shrink-0 text-white/45">{formatFileSize(cv.size)}</span>
+                            </span>
+                            <button
+                                type="button"
+                                onClick={clearFile}
+                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-white/60 transition-colors hover:text-white"
+                                aria-label="Remove CV"
+                            >
+                                <X className="h-4 w-4" strokeWidth={2} />
+                            </button>
+                        </div>
+                    ) : (
+                        <label
+                            htmlFor="apply-cv"
+                            className="flex cursor-pointer items-center justify-center gap-2.5 border border-dashed border-white/25 bg-white/[0.02] px-3.5 py-6 text-sm text-white/65 transition-colors hover:border-electric hover:text-white"
+                        >
+                            <Upload className="h-4 w-4 text-electric" strokeWidth={1.75} />
+                            Choose a file to upload
+                        </label>
+                    )}
+                    <input
+                        ref={fileInputRef}
+                        id="apply-cv"
+                        type="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={handleFileChange}
+                        className="sr-only"
+                    />
+                </div>
+                <div className="sm:col-span-2">
+                    <label htmlFor="apply-message" className={labelClass}>
+                        Message
+                    </label>
+                    <textarea
+                        id="apply-message"
+                        rows={4}
+                        maxLength={5000}
+                        value={form.message}
+                        onChange={updateField('message')}
+                        placeholder="Tell us briefly about your CAE experience, tools and the projects you have worked on."
+                        className={`${inputClass} resize-y`}
+                    />
+                </div>
+            </div>
+
+            {/* Honeypot — hidden from real visitors and screen readers. */}
+            <div
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', top: 0, width: 1, height: 1, overflow: 'hidden' }}
+            >
+                <label htmlFor="apply-website">Website</label>
+                <input
+                    id="apply-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={updateField('website')}
+                />
+            </div>
+
+            <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 bg-electric px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            >
+                {status === 'submitting' ? (
+                    <>
+                        <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+                        Sending
+                    </>
+                ) : (
+                    <>
+                        Submit Application
+                        <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                    </>
+                )}
+            </button>
+            {status === 'error' && errorMessage && (
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-red-300" role="alert">
+                    {errorMessage}
+                </p>
+            )}
+            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
+                Your details and CV are used only to assess your application and are treated confidentially.
+            </p>
+        </form>
+    );
+}
+
+function EmailOption({ position }) {
+    const [copied, setCopied] = useState(false);
+
+    const copyEmail = async () => {
+        try {
+            await navigator.clipboard.writeText(CAREERS_EMAIL);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            // Clipboard can be blocked (e.g. non-HTTPS preview); the address stays visible to copy by hand.
+        }
+    };
+
+    return (
+        <div className="border border-white/15 bg-navy p-6">
+            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                <Mail className="h-3.5 w-3.5 text-electric" strokeWidth={1.75} />
+                Prefer Email?
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-white/75">
+                Send your CV directly to our team, with the position in the subject line.
+            </p>
+            <p className="mt-4 break-all font-display text-lg font-semibold text-white">{CAREERS_EMAIL}</p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                <a
+                    href={mailtoFor(position)}
+                    className="inline-flex items-center justify-center gap-2 border border-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"
+                >
+                    Open Email App
+                    <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} />
+                </a>
+                <button
+                    type="button"
+                    onClick={copyEmail}
+                    className="inline-flex items-center justify-center gap-2 border border-white/25 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white/85 transition-colors hover:border-electric hover:text-electric"
+                >
+                    {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2} />}
+                    {copied ? 'Copied' : 'Copy Email'}
+                </button>
+            </div>
+        </div>
+    );
 }
 
 function JobList({ heading, items }) {
@@ -71,7 +526,7 @@ function JobList({ heading, items }) {
     );
 }
 
-function JobPosting({ job }) {
+function JobPosting({ job, onApply }) {
     return (
         <article id={job.id} className="scroll-mt-20 border border-border bg-card">
             <div className="flex flex-col gap-6 border-b border-border p-6 lg:flex-row lg:items-start lg:justify-between lg:p-8">
@@ -95,13 +550,14 @@ function JobPosting({ job }) {
                         </span>
                     </div>
                 </div>
-                <a
-                    href={mailtoFor(job)}
+                <button
+                    type="button"
+                    onClick={() => onApply(job.title)}
                     className="inline-flex shrink-0 items-center justify-center gap-2 bg-electric px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99]"
                 >
                     Apply Now
-                    <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} />
-                </a>
+                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                </button>
             </div>
 
             <div className="p-6 lg:p-8">
@@ -115,8 +571,8 @@ function JobPosting({ job }) {
 
             <div className="flex flex-col gap-3 border-t border-border p-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                    To apply, email your CV to{' '}
-                    <a href={mailtoFor(job)} className="font-medium text-electric hover:underline">
+                    Apply online with the form below, or email your CV to{' '}
+                    <a href={mailtoFor(job.title)} className="font-medium text-electric hover:underline">
                         {CAREERS_EMAIL}
                     </a>{' '}
                     with the job title in the subject line.
@@ -127,6 +583,13 @@ function JobPosting({ job }) {
 }
 
 export default function CareersPage() {
+    const [position, setPosition] = useState(POSITION_OPTIONS[0]);
+
+    const applyFor = (title) => {
+        setPosition(title);
+        document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
@@ -242,33 +705,32 @@ export default function CareersPage() {
                         <div className="mt-12 space-y-8">
                             {JOBS.map((job) => (
                                 <Reveal key={job.id}>
-                                    <JobPosting job={job} />
+                                    <JobPosting job={job} onApply={applyFor} />
                                 </Reveal>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* GENERAL APPLICATION */}
-                <section id="general-application" className="tech-grid-dark bg-navy">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-24">
+                {/* APPLY */}
+                <section id="apply" className="tech-grid-dark bg-navy">
+                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
                             <SectionHeader
                                 dark
-                                label="Don't See a Fit?"
-                                title="Send us a speculative application"
-                                description="We are always interested in hearing from talented CAE and CAD engineers. Email your CV and tell us which area you would like to work in."
+                                label="Apply"
+                                title="Submit your application"
+                                description="Apply online in a couple of minutes, or send your CV by email if you prefer. Don't see a matching role? Choose General Application — we are always interested in talented CAE and CAD engineers."
                             />
                         </Reveal>
-                        <Reveal delay={0.1}>
-                            <a
-                                href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent('General Application')}`}
-                                className="mt-10 inline-flex items-center gap-2 border border-electric px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-electric transition-colors hover:bg-electric hover:text-white"
-                            >
-                                <Mail className="h-3.5 w-3.5" strokeWidth={2} />
-                                {CAREERS_EMAIL}
-                            </a>
-                        </Reveal>
+                        <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-14">
+                            <Reveal delay={0.1} className="lg:col-span-3">
+                                <ApplicationForm position={position} onPositionChange={setPosition} />
+                            </Reveal>
+                            <Reveal delay={0.2} className="lg:col-span-2">
+                                <EmailOption position={position} />
+                            </Reveal>
+                        </div>
                     </div>
                 </section>
             </main>

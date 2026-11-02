@@ -117,8 +117,19 @@ class SMTP
             return false;
         }
 
+        // SSL sockets can accept a large write in pieces, so keep writing until
+        // the whole message (which may carry a multi-MB attachment) is sent.
         $data = rtrim($body, "\r\n") . "\r\n.\r\n";
-        @fwrite($this->socket, $data);
+        $total = strlen($data);
+        $written = 0;
+        while ($written < $total) {
+            $bytes = @fwrite($this->socket, substr($data, $written, 65536));
+            if ($bytes === false || $bytes === 0) {
+                $this->lastError = 'Failed to write message data.';
+                return false;
+            }
+            $written += $bytes;
+        }
 
         $response = $this->readResponse();
         if ($response['code'] !== 250) {

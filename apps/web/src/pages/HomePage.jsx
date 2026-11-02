@@ -525,7 +525,11 @@ function EnquiryForm() {
                 </p>
             )}
             <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
-                Your information will be treated confidentially and used only to respond to your enquiry.
+                Your information will be treated confidentially and used only to respond to your enquiry. See our{' '}
+                <a href="/privacy" className="underline transition-colors hover:text-electric">
+                    Privacy Policy
+                </a>
+                .
             </p>
         </form>
     );

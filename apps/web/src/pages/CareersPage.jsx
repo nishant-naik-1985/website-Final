@@ -492,7 +492,12 @@ function ApplicationForm({ position, onPositionChange }) {
                 </p>
             )}
             <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
-                Your details and CV are used only to assess your application and are treated confidentially.
+                Your details and CV are used only to assess your application and are treated confidentially. We keep
+                applications for up to 12 months. See our{' '}
+                <a href="/privacy" className="underline transition-colors hover:text-electric">
+                    Privacy Policy
+                </a>
+                .
             </p>
         </form>
     );

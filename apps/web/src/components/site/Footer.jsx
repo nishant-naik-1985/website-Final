@@ -103,6 +103,10 @@ export default function SiteFooter() {
                 <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
                     <p className="font-mono text-[11px] tracking-[0.08em] text-white/45">
                         © {year} CAxperts Engineering Pvt. Ltd. All rights reserved.
+                        <span className="mx-2 text-white/25" aria-hidden="true">·</span>
+                        <a href="/privacy" className="transition-colors hover:text-electric">
+                            Privacy Policy
+                        </a>
                     </p>
                     <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45">
                         CAE · CAD · Simulation · Product Development

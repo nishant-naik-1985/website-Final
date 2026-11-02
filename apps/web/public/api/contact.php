@@ -37,17 +37,24 @@ function rateLimitExceeded($ip) {
         }
     }
 
-    $recent = [];
-    foreach (($items[$ip] ?? []) as $ts) {
-        if ($now - (int) $ts < $window) {
-            $recent[] = (int) $ts;
+    // Drop expired timestamps for every visitor, not just this one, so stored IP
+    // addresses never outlive the rate-limit window (the privacy policy says so).
+    $pruned = [];
+    foreach ($items as $key => $timestamps) {
+        $recent = [];
+        foreach ((array) $timestamps as $ts) {
+            if ($now - (int) $ts < $window) {
+                $recent[] = (int) $ts;
+            }
+        }
+        if (!empty($recent)) {
+            $pruned[$key] = $recent;
         }
     }
-    $recent[] = $now;
-    $items[$ip] = $recent;
-    @file_put_contents($file, json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    $pruned[$ip][] = $now;
+    @file_put_contents($file, json_encode($pruned, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-    return count($recent) > 5;
+    return count($pruned[$ip]) > 5;
 }
 
 function getConfig() {

@@ -24,6 +24,7 @@ import Reveal from '@/components/Reveal';
 import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
+import SectionHeader from '@/components/site/SectionHeader';
 import Seo from '@/components/Seo';
 import {
     Select,
@@ -222,32 +223,6 @@ const INTEREST_OPTIONS = [
 const INDUSTRY_OPTIONS = ['Automotive', 'Industrial', 'Aerospace', 'Mobility', 'Energy', 'Other'];
 const TIMELINE_OPTIONS = ['Immediate', 'Within 1 month', '1–3 months', 'Exploring options'];
 const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', industry: '', timeline: '', message: '', website: '' };
-
-function SectionHeader({ label, title, description, dark = false }) {
-    return (
-        <div className="grid gap-6 border-t pt-8 md:grid-cols-12 md:gap-8" style={{ borderColor: dark ? 'hsl(0 0% 100% / 0.12)' : 'hsl(var(--border))' }}>
-            <div className="md:col-span-3">
-                <p className={`font-mono text-[10px] uppercase tracking-[0.24em] ${dark ? 'text-electric' : 'text-electric'}`}>
-                    {label}
-                </p>
-            </div>
-            <div className="md:col-span-9">
-                <h2
-                    className={`font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl ${
-                        dark ? 'text-white' : 'text-navy'
-                    }`}
-                >
-                    {title}
-                </h2>
-                {description && (
-                    <p className={`mt-4 max-w-2xl leading-relaxed ${dark ? 'text-white/65' : 'text-muted-foreground'}`}>
-                        {description}
-                    </p>
-                )}
-            </div>
-        </div>
-    );
-}
 
 function EnquiryForm() {
     const [form, setForm] = useState(EMPTY_FORM);

@@ -3,13 +3,14 @@ import { Menu, ArrowUpRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 
 const NAV_LINKS = [
-    { label: 'About', href: '#about' },
-    { label: 'Services', href: '#services' },
-    { label: 'Capabilities', href: '#capabilities' },
-    { label: 'Industries', href: '#industries' },
-    { label: 'Process', href: '#process' },
-    { label: 'Case Studies', href: '#case-studies' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'About', href: '/#about' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Capabilities', href: '/#capabilities' },
+    { label: 'Industries', href: '/#industries' },
+    { label: 'Process', href: '/#process' },
+    { label: 'Case Studies', href: '/#case-studies' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Contact', href: '/#contact' },
 ];
 
 export default function SiteHeader() {
@@ -18,7 +19,7 @@ export default function SiteHeader() {
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-navy-deep/95 backdrop-blur-sm">
             <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-10">
-                <a href="#home" className="flex items-center gap-2" aria-label="CAxperts Engineering home">
+                <a href="/" className="flex items-center gap-2" aria-label="CAxperts Engineering home">
                     <img
                         src="/logo_only_C.png"
                         alt=""
@@ -49,7 +50,7 @@ export default function SiteHeader() {
 
                 <div className="flex items-center gap-3">
                     <a
-                        href="#contact"
+                        href="/#contact"
                         className="hidden items-center gap-1.5 bg-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-electric/85 lg:inline-flex"
                     >
                         Discuss Your Requirement
@@ -85,7 +86,7 @@ export default function SiteHeader() {
                                     ))}
                                 </nav>
                                 <a
-                                    href="#contact"
+                                    href="/#contact"
                                     onClick={() => setOpen(false)}
                                     className="mt-8 inline-flex items-center justify-center gap-2 bg-electric px-4 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-electric/85"
                                 >

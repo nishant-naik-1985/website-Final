@@ -6,7 +6,7 @@ import SiteFooter from '@/components/site/Footer';
 
 const QUICK_LINKS = [
     { label: 'Services', href: '/#services' },
-    { label: 'Case Studies', href: '/#case-studies' },
+    { label: 'Capabilities', href: '/#capabilities' },
     { label: 'Careers', href: '/careers' },
     { label: 'Contact', href: '/#contact' },
 ];

@@ -12,7 +12,6 @@ const EXPLORE_LINKS = [
     { label: 'How We Work', href: '/#process' },
     { label: 'Delivery Model', href: '/#delivery' },
     { label: 'Quality', href: '/#quality' },
-    { label: 'Case Studies', href: '/#case-studies' },
     { label: 'Careers', href: '/careers' },
 ];
 

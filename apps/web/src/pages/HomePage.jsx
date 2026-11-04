@@ -38,9 +38,6 @@ import {
 
 const HERO_IMAGE = 'https://images.hostinger.com/cf164097-67c4-40f2-8a60-a14114e849ba.png';
 const ABOUT_IMAGE = 'https://images.hostinger.com/67362f6f-7741-4dad-bb9d-36896c181121.png';
-const CASE_CRASH_IMAGE = 'https://images.hostinger.com/18523841-866b-4851-8e2f-900c694fe4cc.png';
-const CASE_STRUCTURAL_IMAGE = 'https://images.hostinger.com/a557888b-0823-4d5a-9ce4-32b78bd18bc5.png';
-const CASE_AUTOMATION_IMAGE = 'https://images.hostinger.com/37c35307-550d-41be-9326-0f4f57ad6875.png';
 
 // Service content lives in src/data/services.js (shared with the service pages).
 const SERVICE_ICONS = {
@@ -145,39 +142,6 @@ const QUALITY_ITEMS = [
             { name: 'TISAX AL2', detail: 'Automotive information security assessment — planned.' },
             { name: 'ISO 27001', detail: 'Information security certification — planned.' },
         ],
-    },
-];
-
-const CASE_STUDIES = [
-    {
-        image: CASE_CRASH_IMAGE,
-        caption: 'Full-vehicle crash simulation study',
-        tag: 'Crash & Occupant Safety',
-        title: 'Passenger vehicle crash & occupant safety program',
-        scope:
-            'Full-vehicle crash model build, loadcase setup and occupant-safety simulation for a passenger vehicle program.',
-        approach:
-            'Detailed meshing and model assembly, regulatory and consumer-test loadcases, and structural countermeasure studies with the customer engineering team.',
-    },
-    {
-        image: CASE_STRUCTURAL_IMAGE,
-        caption: 'Structural stress contour review',
-        tag: 'Structural & Durability',
-        title: 'Structural & durability assessment for heavy machinery',
-        scope:
-            'Stiffness, strength and durability assessment of chassis and mounting structures for a heavy-machinery application.',
-        approach:
-            'Finite element modelling of welded assemblies, duty-cycle based loadcases and iterative design proposals for critical regions.',
-    },
-    {
-        image: CASE_AUTOMATION_IMAGE,
-        caption: 'Scripted CAE workflow automation',
-        tag: 'CAE Automation',
-        title: 'Automation of a repetitive crash-simulation workflow',
-        scope:
-            'Automation of repetitive pre- and post-processing tasks within an established crash-simulation workflow.',
-        approach:
-            'Python-based scripting for model checks, deck preparation and standardised report generation, integrated into the existing tool chain.',
     },
 ];
 
@@ -959,66 +923,6 @@ export default function HomePage() {
                                             ))}
                                         </ul>
                                     </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* CASE STUDIES — 07 */}
-                <section id="case-studies" className="bg-background">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Case Studies"
-                                title="Representative engagements, anonymised under NDA"
-                                description="Client identities and program details are withheld under confidentiality agreements. Scope and approach are described as delivered."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-8 lg:grid-cols-3">
-                            {CASE_STUDIES.map((study, i) => (
-                                <Reveal key={study.tag} delay={0.08 * i} className="h-full">
-                                    <article className="flex h-full flex-col border border-border bg-card">
-                                        <figure className="relative">
-                                            <AiImageBadge />
-                                            <img
-                                                src={study.image}
-                                                alt={study.caption}
-                                                className="h-52 w-full object-cover"
-                                                loading="lazy"
-                                            />
-                                            <figcaption className="flex items-center justify-between border-t border-border px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                                <span>
-                                                    {study.caption}
-                                                </span>
-                                            </figcaption>
-                                        </figure>
-                                        <div className="flex flex-1 flex-col border-t border-border p-6">
-                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-electric">
-                                                {study.tag}
-                                            </p>
-                                            <h3 className="mt-3 font-display text-lg font-bold leading-snug tracking-tight text-navy">
-                                                {study.title}
-                                            </h3>
-                                            <dl className="mt-4 flex-1 space-y-4 text-sm leading-relaxed">
-                                                <div>
-                                                    <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                                        Scope
-                                                    </dt>
-                                                    <dd className="mt-1 text-foreground/80">{study.scope}</dd>
-                                                </div>
-                                                <div>
-                                                    <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                                        Approach
-                                                    </dt>
-                                                    <dd className="mt-1 text-foreground/80">{study.approach}</dd>
-                                                </div>
-                                            </dl>
-                                            <p className="mt-5 border-t border-border pt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                                                Anonymised engagement — details under NDA
-                                            </p>
-                                        </div>
-                                    </article>
                                 </Reveal>
                             ))}
                         </div>

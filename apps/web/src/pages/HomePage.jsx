@@ -6,10 +6,8 @@ import Reveal from '@/components/Reveal';
 import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
-import SectionHeader from '@/components/site/SectionHeader';
-import { CtaBand, IndustryGrid, MoreLink, Section, ServiceCards } from '@/components/site/blocks';
 import Seo from '@/components/Seo';
-import { CAPABILITY_GROUPS, HERO_IMAGE, TOOLS } from '@/data/content';
+import { HERO_IMAGE } from '@/data/content';
 
 // The site used to be one long page with #anchors. Links shared before the
 // split (e.g. /#contact on LinkedIn) are forwarded to the page that now holds
@@ -34,8 +32,6 @@ export default function HomePage() {
     useEffect(() => {
         if (LEGACY_ANCHORS[hash]) navigate(LEGACY_ANCHORS[hash], { replace: true });
     }, [hash, navigate]);
-
-    const coreCapabilities = CAPABILITY_GROUPS.find((group) => group.status === 'Core').items;
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -149,86 +145,6 @@ export default function HomePage() {
                         </Reveal>
                     </div>
                 </section>
-
-                {/* ABOUT — teaser */}
-                <Section>
-                    <Reveal>
-                        <SectionHeader
-                            label="About"
-                            title="An engineering-first consultancy, built around simulation"
-                            description="CAxperts Engineering Pvt. Ltd. is a Pune-based engineering services company specialising in computer-aided engineering and design, supporting automotive and industrial product development from early concept studies to detailed simulation, design and validation."
-                        />
-                    </Reveal>
-                    <Reveal delay={0.1}>
-                        <div className="md:pl-[25%]">
-                            <MoreLink href="/about">More about CAxperts</MoreLink>
-                        </div>
-                    </Reveal>
-                </Section>
-
-                {/* SERVICES — teaser */}
-                <Section tone="muted">
-                    <Reveal>
-                        <SectionHeader
-                            label="Services"
-                            title="Six practice areas, one engineering standard"
-                            description="Every engagement is delivered by specialist engineers using industry-standard tools and documented methods."
-                        />
-                    </Reveal>
-                    <ServiceCards />
-                </Section>
-
-                {/* CAPABILITIES — teaser */}
-                <Section tone="dark">
-                    <Reveal>
-                        <SectionHeader
-                            dark
-                            label="Capabilities"
-                            title="Specialist simulation practice, industry-standard tools"
-                            description="Our core practice areas today, delivered with the solvers, pre/post processors and CAD systems our customers already use."
-                        />
-                    </Reveal>
-                    <Reveal delay={0.1}>
-                        <div className="mt-12 md:pl-[25%]">
-                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Core practice</p>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {coreCapabilities.map((item) => (
-                                    <span key={item} className="bg-electric px-3 py-1.5 font-display text-sm font-semibold text-white">
-                                        {item}
-                                    </span>
-                                ))}
-                            </div>
-                            <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Toolchain</p>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {TOOLS.map((tool) => (
-                                    <span key={tool} className="border border-white/15 px-2.5 py-1 font-mono text-[11px] text-white/75">
-                                        {tool}
-                                    </span>
-                                ))}
-                            </div>
-                            <MoreLink href="/capabilities" dark>
-                                All capabilities
-                            </MoreLink>
-                        </div>
-                    </Reveal>
-                </Section>
-
-                {/* INDUSTRIES — teaser */}
-                <Section>
-                    <Reveal>
-                        <SectionHeader
-                            label="Industries"
-                            title="Sector knowledge that shapes better models"
-                            description="Our engineers bring domain context to every model — so loadcases, constraints and acceptance criteria reflect real operating conditions."
-                        />
-                    </Reveal>
-                    <IndustryGrid compact />
-                    <Reveal delay={0.1}>
-                        <MoreLink href="/industries">Industries we serve</MoreLink>
-                    </Reveal>
-                </Section>
-
-                <CtaBand />
             </main>
 
             <SiteFooter />

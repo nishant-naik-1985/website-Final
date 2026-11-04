@@ -2,15 +2,16 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 
 const EXPLORE_LINKS = [
-    { label: 'About', href: '#about' },
-    { label: 'Why CAXPERTS', href: '#why-caxperts' },
-    { label: 'Services', href: '#services' },
-    { label: 'Capabilities', href: '#capabilities' },
-    { label: 'Industries', href: '#industries' },
-    { label: 'How We Work', href: '#process' },
-    { label: 'Delivery Model', href: '#delivery' },
-    { label: 'Quality', href: '#quality' },
-    { label: 'Case Studies', href: '#case-studies' },
+    { label: 'About', href: '/#about' },
+    { label: 'Why CAXPERTS', href: '/#why-caxperts' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Capabilities', href: '/#capabilities' },
+    { label: 'Industries', href: '/#industries' },
+    { label: 'How We Work', href: '/#process' },
+    { label: 'Delivery Model', href: '/#delivery' },
+    { label: 'Quality', href: '/#quality' },
+    { label: 'Case Studies', href: '/#case-studies' },
+    { label: 'Careers', href: '/careers' },
 ];
 
 const SERVICE_LINKS = [
@@ -67,7 +68,7 @@ export default function SiteFooter() {
                             {SERVICE_LINKS.map((label) => (
                                 <li key={label}>
                                     <a
-                                        href="#services"
+                                        href="/#services"
                                         className="text-sm text-white/70 transition-colors hover:text-electric"
                                     >
                                         {label}
@@ -91,7 +92,7 @@ export default function SiteFooter() {
                             info@caxperts-engineering.com
                         </a>
                         <a
-                            href="#contact"
+                            href="/#contact"
                             className="mt-5 inline-flex items-center gap-2 border border-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"
                         >
                             Send an Enquiry
@@ -102,6 +103,10 @@ export default function SiteFooter() {
                 <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
                     <p className="font-mono text-[11px] tracking-[0.08em] text-white/45">
                         © {year} CAxperts Engineering Pvt. Ltd. All rights reserved.
+                        <span className="mx-2 text-white/25" aria-hidden="true">·</span>
+                        <a href="/privacy" className="transition-colors hover:text-electric">
+                            Privacy Policy
+                        </a>
                     </p>
                     <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45">
                         CAE · CAD · Simulation · Product Development

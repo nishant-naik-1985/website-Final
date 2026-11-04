@@ -67,7 +67,7 @@ export default function ServicePage() {
                         <Reveal>
                             <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.24em] text-electric">
                                 <span className="inline-block h-2 w-2 bg-electric" aria-hidden="true" />
-                                <a href="/#services" className="transition-colors hover:text-white">
+                                <a href="/services" className="transition-colors hover:text-white">
                                     Services
                                 </a>
                             </p>
@@ -87,7 +87,7 @@ export default function ServicePage() {
                         <Reveal delay={0.3}>
                             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                                 <a
-                                    href="/#contact"
+                                    href={`/contact?service=${service.slug}`}
                                     className="inline-flex items-center justify-center gap-2 bg-electric px-7 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99]"
                                 >
                                     Discuss Your Requirement

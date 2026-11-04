@@ -5,10 +5,10 @@ import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 
 const QUICK_LINKS = [
-    { label: 'Services', href: '/#services' },
-    { label: 'Case Studies', href: '/#case-studies' },
+    { label: 'Services', href: '/services' },
+    { label: 'Capabilities', href: '/capabilities' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Contact', href: '/contact' },
 ];
 
 export default function NotFoundPage() {
@@ -46,7 +46,7 @@ export default function NotFoundPage() {
                             <ArrowRight className="h-4 w-4" strokeWidth={2} />
                         </a>
                         <a
-                            href="/#contact"
+                            href="/contact"
                             className="inline-flex items-center justify-center gap-2 border border-white/25 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-white/85 transition-colors hover:border-electric hover:text-electric"
                         >
                             Contact Us

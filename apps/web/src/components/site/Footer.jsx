@@ -4,15 +4,14 @@ import { analyticsEnabled, openCookieSettings } from '@/lib/analytics';
 import { SERVICES } from '@/data/services';
 
 const EXPLORE_LINKS = [
-    { label: 'About', href: '/#about' },
-    { label: 'Why CAxperts', href: '/#why-caxperts' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Capabilities', href: '/#capabilities' },
-    { label: 'Industries', href: '/#industries' },
-    { label: 'How We Work', href: '/#process' },
-    { label: 'Delivery Model', href: '/#delivery' },
-    { label: 'Quality', href: '/#quality' },
-    { label: 'Case Studies', href: '/#case-studies' },
+    { label: 'About', href: '/about' },
+    { label: 'Why CAxperts', href: '/about#why-caxperts' },
+    { label: 'Services', href: '/services' },
+    { label: 'Capabilities', href: '/capabilities' },
+    { label: 'Industries', href: '/industries' },
+    { label: 'How We Work', href: '/how-we-work' },
+    { label: 'Delivery Model', href: '/how-we-work#delivery' },
+    { label: 'Quality', href: '/about#quality' },
     { label: 'Careers', href: '/careers' },
 ];
 
@@ -85,7 +84,7 @@ export default function SiteFooter() {
                             info@caxperts-engineering.com
                         </a>
                         <a
-                            href="/#contact"
+                            href="/contact"
                             className="mt-5 inline-flex items-center gap-2 border border-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"
                         >
                             Send an Enquiry

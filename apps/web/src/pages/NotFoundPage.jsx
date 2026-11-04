@@ -15,7 +15,7 @@ export default function NotFoundPage() {
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground">
             <Helmet>
-                <title>Page Not Found | CAXPERTS Engineering</title>
+                <title>Page Not Found | CAxperts Engineering</title>
                 <meta name="description" content="The page you are looking for could not be found." />
                 {/* The server answers every unknown URL with the app, so tell
                     search engines not to index this as a real page. */}
@@ -54,7 +54,7 @@ export default function NotFoundPage() {
                         </a>
                     </div>
                     <nav className="mt-14 border-t border-white/10 pt-6" aria-label="Popular pages">
-                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">Popular pages</p>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Popular pages</p>
                         <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
                             {QUICK_LINKS.map((link) => (
                                 <li key={link.href}>

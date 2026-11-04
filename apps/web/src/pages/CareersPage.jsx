@@ -22,6 +22,7 @@ import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
 import Seo from '@/components/Seo';
+import { trackEvent } from '@/lib/analytics';
 import {
     Select,
     SelectContent,
@@ -241,6 +242,8 @@ function ApplicationForm({ position, onPositionChange }) {
                 return;
             }
 
+            // Only the position is sent, never the applicant's details.
+            trackEvent('job_application', { position });
             setStatus('success');
             setForm(EMPTY_APPLICATION);
             clearFile();
@@ -273,8 +276,8 @@ function ApplicationForm({ position, onPositionChange }) {
     }
 
     const inputClass =
-        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-electric';
-    const labelClass = 'mb-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-white/55';
+        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/50 outline-none transition-colors focus:border-electric';
+    const labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-[0.2em] text-white/55';
 
     return (
         <form onSubmit={handleSubmit} className="border border-white/15 bg-white/[0.03] p-6 sm:p-8">
@@ -405,14 +408,14 @@ function ApplicationForm({ position, onPositionChange }) {
                 </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="apply-cv" className={labelClass}>
-                        CV / Resume * <span className="normal-case tracking-normal text-white/40">(PDF or Word, max 5 MB)</span>
+                        CV / Resume * <span className="normal-case tracking-normal text-white/60">(PDF or Word, max 5 MB)</span>
                     </label>
                     {cv ? (
                         <div className="flex items-center justify-between gap-3 border border-electric/60 bg-electric/10 px-3.5 py-3">
                             <span className="flex min-w-0 items-center gap-2.5 text-sm text-white">
                                 <FileText className="h-4 w-4 shrink-0 text-electric" strokeWidth={1.75} />
                                 <span className="truncate">{cv.name}</span>
-                                <span className="shrink-0 text-white/45">{formatFileSize(cv.size)}</span>
+                                <span className="shrink-0 text-white/60">{formatFileSize(cv.size)}</span>
                             </span>
                             <button
                                 type="button"
@@ -496,7 +499,7 @@ function ApplicationForm({ position, onPositionChange }) {
                     {errorMessage}
                 </p>
             )}
-            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
+            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/60">
                 Your details and CV are used only to assess your application and are treated confidentially. We keep
                 applications for up to 12 months. See our{' '}
                 <a href="/privacy" className="underline transition-colors hover:text-electric">
@@ -523,7 +526,7 @@ function EmailOption({ position }) {
 
     return (
         <div className="border border-white/15 bg-navy p-6">
-            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+            <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                 <Mail className="h-3.5 w-3.5 text-electric" strokeWidth={1.75} />
                 Prefer Email?
             </p>
@@ -555,7 +558,7 @@ function EmailOption({ position }) {
 function JobList({ heading, items }) {
     return (
         <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{heading}</h4>
+            <h4 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{heading}</h4>
             <ul className="mt-4 space-y-3">
                 {items.map((item) => (
                     <li key={item} className="flex gap-3 text-sm leading-relaxed text-foreground/80">
@@ -585,7 +588,7 @@ function JobPosting({ job, onApply }) {
         <article id={job.id} className="scroll-mt-20 border border-border bg-card">
             <div className="flex flex-col gap-6 border-b border-border p-6 lg:flex-row lg:items-start lg:justify-between lg:p-8">
                 <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-electric">Open Position</p>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-electric">Open Position</p>
                     <h3 className="mt-3 font-display text-2xl font-bold leading-snug tracking-tight text-navy md:text-3xl">
                         <button
                             type="button"
@@ -678,10 +681,10 @@ export default function CareersPage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
-                <title>Careers | CAXPERTS Engineering</title>
+                <title>Careers | CAxperts Engineering</title>
                 <meta
                     name="description"
-                    content="Join CAXPERTS Engineering in Pune. Explore open roles in CAE crash and safety simulation and in business development for engineering services."
+                    content="Join CAxperts Engineering in Pune. Explore open roles in CAE crash and safety simulation and in business development for engineering services."
                 />
                 {JOBS.map((job) => (
                     <script key={job.id} type="application/ld+json">
@@ -710,9 +713,9 @@ export default function CareersPage() {
                     </script>
                 ))}
                 <Seo
-                    title="Careers | CAXPERTS Engineering"
-                    description="Open CAE engineering and business development roles at CAXPERTS Engineering, Pune."
-                    siteName="CAXPERTS Engineering"
+                    title="Careers | CAxperts Engineering"
+                    description="Open CAE engineering and business development roles at CAxperts Engineering, Pune."
+                    siteName="CAxperts Engineering"
                 />
             </Helmet>
 

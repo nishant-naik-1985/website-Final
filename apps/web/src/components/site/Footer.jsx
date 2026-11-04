@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import { analyticsEnabled, openCookieSettings } from '@/lib/analytics';
+import { SERVICES } from '@/data/services';
 
 const EXPLORE_LINKS = [
     { label: 'About', href: '/#about' },
@@ -13,15 +14,6 @@ const EXPLORE_LINKS = [
     { label: 'Quality', href: '/#quality' },
     { label: 'Case Studies', href: '/#case-studies' },
     { label: 'Careers', href: '/careers' },
-];
-
-const SERVICE_LINKS = [
-    'CAE & Simulation',
-    'CAD & Engineering',
-    'Pre/Post Processing',
-    'Engineering Consulting',
-    'Digital Engineering & Automation',
-    'Resource Augmentation',
 ];
 
 export default function SiteFooter() {
@@ -66,13 +58,13 @@ export default function SiteFooter() {
                     <div>
                         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Services</p>
                         <ul className="mt-4 space-y-2.5">
-                            {SERVICE_LINKS.map((label) => (
-                                <li key={label}>
+                            {SERVICES.map((service) => (
+                                <li key={service.slug}>
                                     <a
-                                        href="/#services"
+                                        href={`/services/${service.slug}`}
                                         className="text-sm text-white/70 transition-colors hover:text-electric"
                                     >
-                                        {label}
+                                        {service.title}
                                     </a>
                                 </li>
                             ))}

@@ -2,9 +2,11 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 
 // Social + canonical tags only. The page's own <Helmet> must keep a literal
-// <title> and <meta name="description">, because the llms.txt build step reads
+// <title> and <meta name="description">, because tools/prerender.js reads
 // those two tags straight out of the page file's source.
-const Seo = ({ title, description, image, url, siteName, type = 'website' }) => {
+const DEFAULT_IMAGE = 'https://caxperts-engineering.com/og-image.png';
+
+const Seo = ({ title, description, image = DEFAULT_IMAGE, url, siteName, type = 'website' }) => {
     const canonical = url || window.location.origin + window.location.pathname;
 
     return (

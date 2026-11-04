@@ -182,7 +182,7 @@
 				"src/pages/ProductDetailPage.jsx",
 				"src/pages/SubscriptionsPage.jsx",
 				"tailwind.config.js",
-				"tools/generate-llms.js",
+				"tools/prerender.js",
 				"vite.config.js"
 			],
 			"project": [

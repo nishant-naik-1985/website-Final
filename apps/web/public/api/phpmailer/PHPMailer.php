@@ -83,6 +83,12 @@ class PHPMailer
     {
         $headers = [];
         $headers[] = 'From: ' . ($this->FromName !== '' ? $this->FromName . ' <' . $this->From . '>' : $this->From);
+        // To, Date and Message-ID are expected by receiving servers; mail
+        // without them is more likely to be filed as spam.
+        $headers[] = 'To: ' . implode(', ', $this->Recipients);
+        $headers[] = 'Date: ' . date('r');
+        $domain = substr((string) strrchr($this->From, '@'), 1) ?: 'localhost';
+        $headers[] = 'Message-ID: <' . bin2hex(random_bytes(16)) . '@' . $domain . '>';
         $headers[] = 'Reply-To: ' . implode(', ', $this->ReplyTo);
         $headers[] = 'Subject: ' . $this->encodeHeader($this->Subject);
         $headers[] = 'MIME-Version: 1.0';

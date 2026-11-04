@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# Form handlers, not pages.
+Disallow: /api/
+
+Sitemap: https://caxperts-engineering.com/sitemap.xml

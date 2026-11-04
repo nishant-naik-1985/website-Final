@@ -34,10 +34,12 @@ import {
 const CAREERS_EMAIL = 'info@caxperts-engineering.com';
 
 const WHY_JOIN = [
-    { title: 'Real Engineering Work', detail: 'Work on live crash, safety and structural programmes for automotive and industrial customers.' },
+    { title: 'Build Something New', detail: 'Join a young company early and help shape its engineering practice, customers and culture as it grows.' },
     { title: 'Learn From Specialists', detail: 'Model reviews and method guidance from experienced CAE engineers on every project.' },
     { title: 'Industry Toolchain', detail: 'Hands-on experience with ANSA, META, LS-DYNA, Pam-Crash and modern scripting workflows.' },
-    { title: 'Global Exposure', detail: 'Collaborate with customer engineering teams across Europe and India.' },
+    { title: 'Global Exposure', detail: 'Work with engineering teams in India and internationally, with clear technical communication.' },
+    { title: 'Hybrid & Flexible Working', detail: 'A hybrid set-up with flexibility in how and when you work.' },
+    { title: 'Performance Bonus', detail: 'Good work is recognised and rewarded with a performance-linked bonus.' },
 ];
 
 const JOBS = [
@@ -762,10 +764,10 @@ export default function CareersPage() {
                             <SectionHeader
                                 label="Why Join Us"
                                 title="Grow with an engineering-first team"
-                                description="We value engineering judgement, careful method and clear communication — and we invest in helping our engineers develop all three."
+                                description="We value engineering judgement, careful method and clear communication — and we invest in helping our people develop all three."
                             />
                         </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
                             {WHY_JOIN.map((item, i) => (
                                 <Reveal key={item.title} delay={0.06 * i} className="h-full">
                                     <article className="flex h-full flex-col bg-card p-6 lg:p-7">

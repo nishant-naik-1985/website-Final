@@ -152,8 +152,26 @@ if ($interest !== '' && strlen($interest) > 100) {
     sendJson(400, ['ok' => false, 'error' => 'Interest is too long']);
 }
 
+require __DIR__ . '/includes/submissions.php';
+
+// Save a copy first, so the enquiry survives even if email delivery fails.
+$savedPath = storeSubmission('enquiries', [
+    'name' => $name,
+    'company' => $company,
+    'email' => $email,
+    'phone' => $phone,
+    'service' => $interest,
+    'industry' => $industry,
+    'timeline' => $timeline,
+    'message' => $message,
+]);
+
 $config = getConfig();
 if ($config === null) {
+    if ($savedPath !== null) {
+        error_log('[contact.php] Mail config missing; enquiry saved to ' . $savedPath . ' only.');
+        sendJson(200, ['ok' => true]);
+    }
     sendJson(503, ['ok' => false, 'error' => 'Service temporarily unavailable']);
 }
 
@@ -181,11 +199,15 @@ $mail->AltBody = $mail->Body;
 
 try {
     $mail->send();
+    markSubmissionEmailed($savedPath, true);
     sendJson(200, ['ok' => true]);
-} catch (MailerException $exception) {
-    error_log('[contact.php] SMTP delivery failed: ' . $exception->getMessage());
-    sendJson(503, ['ok' => false, 'error' => 'Service temporarily unavailable']);
 } catch (Exception $exception) {
+    // Catches MailerException too (it extends Exception).
     error_log('[contact.php] Mail delivery failed: ' . $exception->getMessage());
+    markSubmissionEmailed($savedPath, false);
+    if ($savedPath !== null) {
+        // The enquiry is safely stored, so the visitor doesn't need to resend it.
+        sendJson(200, ['ok' => true]);
+    }
     sendJson(503, ['ok' => false, 'error' => 'Service temporarily unavailable']);
 }

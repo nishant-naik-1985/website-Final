@@ -171,7 +171,7 @@ export default function PrivacyPage() {
                         <BulletList
                             items={[
                                 'To reply to your enquiry, discuss your requirement and prepare proposals.',
-                                'To assess your job application, contact you about it and, with your agreement, consider you for other suitable roles.',
+                                'To assess your job application, contact you about it and, with your agreement, consider you for other suitable roles. When you apply online, we send you an automatic email confirming that we received your application.',
                                 'To manage our business relationship with you and your organisation.',
                                 'To keep the website and our forms secure and protect them against spam and misuse.',
                                 'To meet our legal, tax and accounting obligations.',
@@ -249,6 +249,12 @@ export default function PrivacyPage() {
                                     : []),
                             ]}
                         />
+                        <p>
+                            Besides our email inbox, we keep a backup copy of each form submission (including any CV) on
+                            our hosting server, in a folder that cannot be accessed from the web, so that no enquiry or
+                            application is lost if an email fails. These copies are deleted automatically at the end of
+                            the periods above.
+                        </p>
                         <p>
                             You can ask us to delete your data sooner at any time. We will do so unless the law requires
                             us to keep it.

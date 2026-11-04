@@ -27,6 +27,7 @@ import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
 import Seo from '@/components/Seo';
 import { trackEvent } from '@/lib/analytics';
+import { SERVICES } from '@/data/services';
 import {
     Select,
     SelectContent,
@@ -41,44 +42,15 @@ const CASE_CRASH_IMAGE = 'https://images.hostinger.com/18523841-866b-4851-8e2f-9
 const CASE_STRUCTURAL_IMAGE = 'https://images.hostinger.com/a557888b-0823-4d5a-9ce4-32b78bd18bc5.png';
 const CASE_AUTOMATION_IMAGE = 'https://images.hostinger.com/37c35307-550d-41be-9326-0f4f57ad6875.png';
 
-const SERVICES = [
-    {
-        icon: Activity,
-        title: 'CAE & Simulation',
-        description:
-            'Structural, crash and safety simulation across the product development cycle — from concept studies to validation support.',
-    },
-    {
-        icon: DraftingCompass,
-        title: 'CAD & Engineering',
-        description:
-            '3D modelling, detailed design and engineering drawings built for downstream simulation and manufacturing.',
-    },
-    {
-        icon: Layers,
-        title: 'Pre/Post Processing',
-        description:
-            'High-quality meshing, model assembly and results post-processing with ANSA, META and HyperMesh workflows.',
-    },
-    {
-        icon: LineChart,
-        title: 'Engineering Consulting',
-        description:
-            'Simulation strategy, method development and independent design reviews for automotive and industrial programs.',
-    },
-    {
-        icon: Workflow,
-        title: 'Digital Engineering & Automation',
-        description:
-            'Python and MATLAB based automation of repetitive CAE tasks — model checks, deck preparation and reporting.',
-    },
-    {
-        icon: Users,
-        title: 'Resource Augmentation',
-        description:
-            'Skilled CAE and CAD engineers embedded with customer teams to extend in-house engineering capacity.',
-    },
-];
+// Service content lives in src/data/services.js (shared with the service pages).
+const SERVICE_ICONS = {
+    'cae-simulation': Activity,
+    'cad-engineering': DraftingCompass,
+    'pre-post-processing': Layers,
+    'engineering-consulting': LineChart,
+    'digital-engineering-automation': Workflow,
+    'resource-augmentation': Users,
+};
 
 const CAPABILITY_GROUPS = [
     {
@@ -755,25 +727,31 @@ export default function HomePage() {
                             />
                         </Reveal>
                         <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-                            {SERVICES.map((service, i) => (
-                                <Reveal key={service.title} delay={0.06 * i} className="h-full">
-                                    <article className="group flex h-full flex-col bg-card p-6 transition-colors hover:bg-navy lg:p-8">
-                                        <div className="flex items-start justify-between">
-                                            <service.icon
-                                                className="h-6 w-6 text-electric"
-                                                strokeWidth={1.5}
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
-                                            {service.title}
-                                        </h3>
-                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-hover:text-white/65">
-                                            {service.description}
-                                        </p>
-                                    </article>
-                                </Reveal>
-                            ))}
+                            {SERVICES.map((service, i) => {
+                                const Icon = SERVICE_ICONS[service.slug];
+                                return (
+                                    <Reveal key={service.slug} delay={0.06 * i} className="h-full">
+                                        <a
+                                            href={`/services/${service.slug}`}
+                                            className="group flex h-full flex-col bg-card p-6 transition-colors hover:bg-navy lg:p-8"
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <Icon className="h-6 w-6 text-electric" strokeWidth={1.5} aria-hidden="true" />
+                                            </div>
+                                            <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
+                                                {service.title}
+                                            </h3>
+                                            <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-hover:text-white/65">
+                                                {service.summary}
+                                            </p>
+                                            <span className="mt-auto flex items-center gap-2 pt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-electric">
+                                                Learn more
+                                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                                            </span>
+                                        </a>
+                                    </Reveal>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>

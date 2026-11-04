@@ -192,8 +192,28 @@ if (class_exists('finfo')) {
 $safeName = trim(preg_replace('/[^A-Za-z0-9]+/', '-', $name), '-');
 $cvFileName = 'CV-' . ($safeName !== '' ? substr($safeName, 0, 60) : 'applicant') . '.' . $extension;
 
+require __DIR__ . '/includes/submissions.php';
+
+// Save a copy (with the CV) first, so the application survives even if email
+// delivery fails.
+$savedPath = storeSubmission('applications', [
+    'position' => $position,
+    'name' => $name,
+    'email' => $email,
+    'phone' => $phone,
+    'location' => $location,
+    'experience' => $experience,
+    'notice_period' => $noticePeriod,
+    'linkedin' => $linkedin,
+    'message' => $message,
+], $cv['tmp_name'], $cvFileName);
+
 $config = getConfig();
 if ($config === null) {
+    if ($savedPath !== null) {
+        error_log('[apply.php] Mail config missing; application saved to ' . $savedPath . ' only.');
+        sendJson(200, ['ok' => true]);
+    }
     sendJson(503, ['ok' => false, 'error' => 'Online applications are temporarily unavailable. Please email your CV to info@caxperts-engineering.com.']);
 }
 
@@ -222,9 +242,47 @@ $mail->AltBody = $mail->Body;
 try {
     $mail->addAttachment($cv['tmp_name'], $cvFileName, $cvMimeType);
     $mail->send();
-    sendJson(200, ['ok' => true]);
-} catch (MailerException $exception) {
-    sendJson(503, ['ok' => false, 'error' => 'Your application could not be sent right now. Please try again or email your CV to info@caxperts-engineering.com.']);
+    markSubmissionEmailed($savedPath, true);
 } catch (Exception $exception) {
-    sendJson(503, ['ok' => false, 'error' => 'Your application could not be sent right now. Please try again or email your CV to info@caxperts-engineering.com.']);
+    // Catches MailerException too (it extends Exception).
+    error_log('[apply.php] Mail delivery failed: ' . $exception->getMessage());
+    markSubmissionEmailed($savedPath, false);
+    if ($savedPath === null) {
+        sendJson(503, ['ok' => false, 'error' => 'Your application could not be sent right now. Please try again or email your CV to info@caxperts-engineering.com.']);
+    }
+    // Otherwise the application is safely stored; carry on and confirm it.
+}
+
+sendApplicantConfirmation($config, $email);
+sendJson(200, ['ok' => true]);
+
+// Automatic "application received" email to the applicant. Deliberately
+// repeats nothing the applicant typed, so the form can't be abused to send
+// someone else an email with arbitrary text. A failure here is only logged.
+function sendApplicantConfirmation($config, $email) {
+    $confirmation = new PHPMailer(true);
+    $confirmation->isSMTP();
+    $confirmation->Host = $config['host'];
+    $confirmation->Port = $config['port'];
+    $confirmation->SMTPSecure = $config['encryption'];
+    $confirmation->SMTPAuth = true;
+    $confirmation->Username = $config['username'];
+    $confirmation->Password = $config['password'];
+    $confirmation->setFrom($config['from_email'], $config['from_name']);
+    $confirmation->addAddress($email);
+    $confirmation->addReplyTo($config['to_email'], $config['from_name']);
+    $confirmation->Subject = 'We have received your application - CAxperts Engineering';
+    $confirmation->Body = "Thank you for applying to CAxperts Engineering.\n\n"
+        . "This is an automatic confirmation that we have received your application and CV. "
+        . "Our team reviews every application, and we will contact you if your profile matches the role.\n\n"
+        . "If you have any questions, simply reply to this email.\n\n"
+        . "Best regards,\nCAxperts Engineering Pvt. Ltd.\nPune, India\nhttps://caxperts-engineering.com/careers\n\n"
+        . "We keep applications for up to 12 months. Our privacy policy: https://caxperts-engineering.com/privacy";
+    $confirmation->AltBody = $confirmation->Body;
+
+    try {
+        $confirmation->send();
+    } catch (Exception $exception) {
+        error_log('[apply.php] Applicant confirmation failed: ' . $exception->getMessage());
+    }
 }

@@ -4,6 +4,14 @@ RewriteBase /
 # Do not rewrite the app entry file itself.
 RewriteRule ^index\.html$ - [L]
 
+# Pages with their own pre-rendered HTML (written by tools/prerender.js), so
+# link-preview bots see each page's title and description: /careers is served
+# from /_pages/careers.html, /services/cae-simulation from
+# /_pages/services/cae-simulation.html. Trailing slashes are tolerated.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/_pages/$1.html -f
+RewriteRule ^(.+?)/?$ /_pages/$1.html [L]
+
 # For any route that is not an existing file or directory, serve the SPA entry.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

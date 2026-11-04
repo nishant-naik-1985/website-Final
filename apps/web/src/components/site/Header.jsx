@@ -6,20 +6,20 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/s
 // `desktop: false` keeps Contact out of the desktop bar, where the
 // "Discuss Your Requirement" button already links to it.
 const NAV_LINKS = [
-    { label: 'About', href: '/#about' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Capabilities', href: '/#capabilities' },
-    { label: 'Industries', href: '/#industries' },
-    { label: 'Process', href: '/#process' },
+    { label: 'About', href: '/about' },
+    { label: 'Services', href: '/services' },
+    { label: 'Capabilities', href: '/capabilities' },
+    { label: 'Industries', href: '/industries' },
+    { label: 'How We Work', href: '/how-we-work' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/#contact', desktop: false },
+    { label: 'Contact', href: '/contact', desktop: false },
 ];
 
 export default function SiteHeader() {
     const [open, setOpen] = useState(false);
     const { pathname } = useLocation();
-    // Only page links (not home-page section anchors) can be "current".
-    const isCurrent = (href) => !href.includes('#') && href === pathname;
+    // A link is "current" on its own page and on pages below it (Services on /services/cae-simulation).
+    const isCurrent = (href) => pathname === href || pathname.startsWith(`${href}/`);
 
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-navy-deep/95 backdrop-blur-sm">
@@ -59,7 +59,7 @@ export default function SiteHeader() {
 
                 <div className="flex items-center gap-3">
                     <a
-                        href="/#contact"
+                        href="/contact"
                         className="hidden items-center gap-1.5 bg-electric px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-electric/85 lg:inline-flex"
                     >
                         Discuss Your Requirement
@@ -98,7 +98,7 @@ export default function SiteHeader() {
                                     ))}
                                 </nav>
                                 <a
-                                    href="/#contact"
+                                    href="/contact"
                                     onClick={() => setOpen(false)}
                                     className="mt-8 inline-flex items-center justify-center gap-2 bg-electric px-4 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-electric/85"
                                 >

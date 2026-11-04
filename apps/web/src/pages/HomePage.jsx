@@ -1,479 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import {
-    Activity,
-    DraftingCompass,
-    Layers,
-    LineChart,
-    Workflow,
-    Users,
-    Car,
-    Tractor,
-    Bot,
-    Wind,
-    Plane,
-    HeartPulse,
-    ArrowRight,
-    ArrowUpRight,
-    MapPin,
-    Loader2,
-    CheckCircle2,
-    AlertCircle,
-} from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
+import { CtaBand, IndustryGrid, MoreLink, Section, ServiceCards } from '@/components/site/blocks';
 import Seo from '@/components/Seo';
-import { trackEvent } from '@/lib/analytics';
-import { SERVICES } from '@/data/services';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { CAPABILITY_GROUPS, HERO_IMAGE, TOOLS } from '@/data/content';
 
-const HERO_IMAGE = 'https://images.hostinger.com/cf164097-67c4-40f2-8a60-a14114e849ba.png';
-const ABOUT_IMAGE = 'https://images.hostinger.com/67362f6f-7741-4dad-bb9d-36896c181121.png';
-
-// Service content lives in src/data/services.js (shared with the service pages).
-const SERVICE_ICONS = {
-    'cae-simulation': Activity,
-    'cad-engineering': DraftingCompass,
-    'pre-post-processing': Layers,
-    'engineering-consulting': LineChart,
-    'digital-engineering-automation': Workflow,
-    'resource-augmentation': Users,
+// The site used to be one long page with #anchors. Links shared before the
+// split (e.g. /#contact on LinkedIn) are forwarded to the page that now holds
+// that section.
+const LEGACY_ANCHORS = {
+    '#about': '/about',
+    '#why-caxperts': '/about#why-caxperts',
+    '#quality': '/about#quality',
+    '#services': '/services',
+    '#capabilities': '/capabilities',
+    '#industries': '/industries',
+    '#process': '/how-we-work',
+    '#delivery': '/how-we-work#delivery',
+    '#contact': '/contact',
+    '#case-studies': '/',
 };
 
-const CAPABILITY_GROUPS = [
-    {
-        status: 'Core',
-        statusClass: 'bg-electric text-white',
-        note: 'Delivered today as a primary practice area.',
-        items: ['Structural Analysis', 'Crash & Safety', 'Seats & Restraints', 'Pedestrian Safety'],
-    },
-    {
-        status: 'Available',
-        statusClass: 'border border-electric/60 text-electric',
-        note: 'Available as part of current engagements.',
-        items: ['Durability', 'Optimisation', 'CAE Automation', 'CAD'],
-    },
-    {
-        status: 'Planned',
-        statusClass: 'border border-white/25 text-white/60',
-        note: 'Roadmap capabilities — not currently delivered.',
-        items: ['NVH', 'Thermal', 'CFD'],
-    },
-];
-
-const TOOLS = [
-    'ANSA',
-    'META',
-    'HyperMesh',
-    'LS-DYNA',
-    'Pam-Crash',
-    'Abaqus',
-    'OptiStruct',
-    'CATIA',
-    'Siemens NX',
-    'SolidWorks',
-    'Creo',
-    'Python',
-    'MATLAB',
-];
-
-const INDUSTRIES = [
-    { icon: Car, name: 'Automotive', detail: 'Body, chassis, closures, seating and restraint systems.' },
-    { icon: Tractor, name: 'Heavy Machinery', detail: 'Structures, brackets and load-bearing assemblies.' },
-    { icon: Bot, name: 'Automation & Robotics', detail: 'Frames, end-effectors and motion system structures.' },
-    { icon: Wind, name: 'Renewable Energy', detail: 'Structural assessment of energy system components.' },
-    { icon: Plane, name: 'Aerospace & Defence', detail: 'Lightweight structures and safety-critical analysis.' },
-    { icon: HeartPulse, name: 'Medical / Biomechanical', detail: 'Device structures and biomechanical simulation.' },
-];
-
-const PROCESS_STEPS = [
-    { name: 'Understand', detail: 'Requirements, constraints, regulations and success criteria are captured up front.' },
-    { name: 'Plan', detail: 'Scope, methods, tools and deliverables are defined with clear review points.' },
-    { name: 'Execute', detail: 'Models are built, analysed and iterated by specialist CAE and CAD engineers.' },
-    { name: 'Validate', detail: 'Results are checked against requirements and discussed with your team.' },
-    { name: 'Deliver', detail: 'Documented models, reports and design proposals are handed over on schedule.' },
-];
-
-const WHY_ITEMS = [
-    { title: 'Engineering Expertise', detail: 'Hands-on CAE, CAD and product-development support grounded in engineering judgement.' },
-    { title: 'Flexible Delivery', detail: 'Project-based engagements, dedicated resources and extended engineering-team support.' },
-    { title: 'Global Collaboration', detail: 'Clear technical communication for customer teams working across Europe and India.' },
-    { title: 'Simulation-Driven Development', detail: 'Analysis, design decisions and validation connected through a disciplined workflow.' },
-    { title: 'Quality & Confidentiality', detail: 'Documented methods, review points and NDA-based handling of customer information.' },
-];
-
-const DELIVERY_MODELS = [
-    { name: 'Dedicated Engineering Team', detail: 'A focused CAE team supporting the customer engineering organisation over an agreed scope.' },
-    { name: 'Project-Based Engineering', detail: 'Defined requirements, milestones and deliverables for a specific technical programme.' },
-    { name: 'Extended Engineering Team', detail: 'Specialist engineers operate as an extension of an existing product-development team.' },
-    { name: 'Europe–India Delivery', detail: 'Customer coordination and technical communication aligned with India-based engineering execution.' },
-];
-
-const QUALITY_ITEMS = [
-    {
-        status: 'In place',
-        statusClass: 'bg-electric text-white',
-        items: [
-            { name: 'NDA & IP Protection', detail: 'Confidentiality agreements and IP safeguards on every engagement.' },
-            { name: 'GDPR-aligned Data Handling', detail: 'Personal data handled in line with GDPR principles.' },
-        ],
-    },
-    {
-        status: 'In progress',
-        statusClass: 'border border-electric/60 text-electric',
-        items: [
-            { name: 'Information Security', detail: 'Information security management practices are being formalised.' },
-        ],
-    },
-    {
-        status: 'Planned',
-        statusClass: 'border border-white/25 text-white/60',
-        items: [
-            { name: 'ISO 9001', detail: 'Quality management system — planned, not yet certified.' },
-            { name: 'TISAX AL2', detail: 'Automotive information security assessment — planned.' },
-            { name: 'ISO 27001', detail: 'Information security certification — planned.' },
-        ],
-    },
-];
-
-const INTEREST_OPTIONS = [
-    { value: 'cae-simulation', label: 'CAE & Simulation' },
-    { value: 'cad-engineering', label: 'CAD & Engineering' },
-    { value: 'pre-post-processing', label: 'Pre/Post Processing' },
-    { value: 'engineering-consulting', label: 'Engineering Consulting' },
-    { value: 'digital-engineering-automation', label: 'Digital Engineering & Automation' },
-    { value: 'resource-augmentation', label: 'Resource Augmentation' },
-    { value: 'other', label: 'Other' },
-];
-
-// `website` is a honeypot: real visitors never see or fill this field (it's
-// hidden off-screen below). A non-empty value means a bot filled it.
-const INDUSTRY_OPTIONS = ['Automotive', 'Industrial', 'Aerospace', 'Mobility', 'Energy', 'Other'];
-const TIMELINE_OPTIONS = ['Immediate', 'Within 1 month', '1–3 months', 'Exploring options'];
-const EMPTY_FORM = { name: '', company: '', email: '', phone: '', interest: '', industry: '', timeline: '', message: '', website: '' };
-
-function EnquiryForm() {
-    const [form, setForm] = useState(EMPTY_FORM);
-    const [status, setStatus] = useState('idle');
-    const [errorMessage, setErrorMessage] = useState('');
-
-    const updateField = (field) => (event) => {
-        if (field === 'phone') {
-            const rawValue = event.target.value;
-            const sanitized = rawValue.replace(/[\u202A-\u202E]/g, '').replace(/[^+\d()\s-]/g, '');
-            setForm((prev) => ({ ...prev, [field]: sanitized }));
-            return;
-        }
-
-        setForm((prev) => ({ ...prev, [field]: event.target.value }));
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const name = form.name.trim();
-        const email = form.email.trim();
-        const company = form.company.trim();
-        const message = form.message.trim();
-        const trimmedPhone = form.phone.trim();
-
-        if (!name || !company || !email || !form.interest || !message) {
-            setStatus('error');
-            setErrorMessage('Please fill in your name, company, business email, service and project description.');
-            return;
-        }
-
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            setStatus('error');
-            setErrorMessage('Please provide a valid email address.');
-            return;
-        }
-
-        if (trimmedPhone && !/^\+?[0-9()\s-]{7,20}$/.test(trimmedPhone)) {
-            setStatus('error');
-            setErrorMessage('Please enter a valid phone number with an international country code if needed.');
-            return;
-        }
-
-        setStatus('submitting');
-        setErrorMessage('');
-        try {
-            const response = await fetch('/api/contact.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    company,
-                    email,
-                    phone: trimmedPhone,
-                    message,
-                    interest: form.interest,
-                    industry: form.industry,
-                    timeline: form.timeline,
-                    website: form.website,
-                }),
-            });
-
-            const body = await response.json().catch(() => null);
-            if (!response.ok || !body?.ok) {
-                if (response.status === 429) {
-                    setErrorMessage(body?.error || 'Too many submissions. Please try again later.');
-                } else if (response.status === 503) {
-                    setErrorMessage(body?.error || 'Email service is not configured. Please email info@caxperts-engineering.com directly.');
-                } else {
-                    setErrorMessage(body?.error || 'Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
-                }
-                setStatus('error');
-                return;
-            }
-
-            trackEvent('generate_lead', { form: 'enquiry', service: form.interest });
-            setStatus('success');
-            setForm(EMPTY_FORM);
-        } catch (err) {
-            setStatus('error');
-            setErrorMessage('Something went wrong while submitting your enquiry. Please try again or email info@caxperts-engineering.com directly.');
-        }
-    };
-
-    if (status === 'success') {
-        return (
-            <div className="flex h-full min-h-[24rem] flex-col items-center justify-center border border-white/15 bg-white/[0.03] p-10 text-center" role="status" aria-live="polite">
-                <CheckCircle2 className="h-10 w-10 text-electric" strokeWidth={1.5} />
-                <p className="mt-5 font-display text-2xl font-bold text-white">Enquiry received</p>
-                <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
-                    Thank you for reaching out to CAxperts Engineering. Our team will review your requirement and get
-                    back to you shortly.
-                </p>
-                <button
-                    type="button"
-                    onClick={() => setStatus('idle')}
-                    className="mt-8 border border-electric px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-electric transition-colors hover:bg-electric hover:text-white"
-                >
-                    Send another enquiry
-                </button>
-            </div>
-        );
-    }
-
-    const inputClass =
-        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/50 outline-none transition-colors focus:border-electric';
-    const labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-[0.2em] text-white/55';
-
-    return (
-        <form onSubmit={handleSubmit} className="border border-white/15 bg-white/[0.03] p-6 sm:p-8" noValidate={false}>
-            <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                    <label htmlFor="enquiry-name" className={labelClass}>
-                        Name *
-                    </label>
-                    <input
-                        id="enquiry-name"
-                        type="text"
-                        required
-                        maxLength={200}
-                        value={form.name}
-                        onChange={updateField('name')}
-                        placeholder="Your full name"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-company" className={labelClass}>
-                        Company *
-                    </label>
-                    <input
-                        id="enquiry-company"
-                        type="text"
-                        required
-                        maxLength={200}
-                        value={form.company}
-                        onChange={updateField('company')}
-                        placeholder="Organisation name"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-email" className={labelClass}>
-                        Business Email *
-                    </label>
-                    <input
-                        id="enquiry-email"
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={updateField('email')}
-                        placeholder="you@company.com"
-                        className={inputClass}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="enquiry-phone" className={labelClass}>
-                        Phone
-                    </label>
-                    <input
-                        id="enquiry-phone"
-                        type="text"
-                        inputMode="tel"
-                        autoComplete="tel"
-                        value={form.phone}
-                        onChange={updateField('phone')}
-                        placeholder="+1 555 123 4567"
-                        className={inputClass}
-                        pattern="^[+()0-9\\s-]{7,20}$"
-                    />
-                </div>
-                <div className="sm:col-span-2">
-                    <label htmlFor="enquiry-interest" className={labelClass}>
-                        Service Required *
-                    </label>
-                    <Select
-                        value={form.interest}
-                        onValueChange={(value) => setForm((prev) => ({ ...prev, interest: value }))}
-                    >
-                        <SelectTrigger
-                            id="enquiry-interest"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
-                        >
-                            <SelectValue placeholder="Select a service area" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
-                            {INTEREST_OPTIONS.map((option) => (
-                                <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                    className="text-sm focus:bg-electric focus:text-white"
-                                >
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <label htmlFor="enquiry-industry" className={labelClass}>
-                        Industry
-                    </label>
-                    <Select
-                        value={form.industry}
-                        onValueChange={(value) => setForm((prev) => ({ ...prev, industry: value }))}
-                    >
-                        <SelectTrigger
-                            id="enquiry-industry"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
-                        >
-                            <SelectValue placeholder="Select an industry" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
-                            {INDUSTRY_OPTIONS.map((option) => (
-                                <SelectItem key={option} value={option} className="text-sm focus:bg-electric focus:text-white">
-                                    {option}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <label htmlFor="enquiry-timeline" className={labelClass}>
-                        Expected Timeline
-                    </label>
-                    <Select
-                        value={form.timeline}
-                        onValueChange={(value) => setForm((prev) => ({ ...prev, timeline: value }))}
-                    >
-                        <SelectTrigger
-                            id="enquiry-timeline"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
-                        >
-                            <SelectValue placeholder="Select a timeframe" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-none border-white/15 bg-navy-deep text-white">
-                            {TIMELINE_OPTIONS.map((option) => (
-                                <SelectItem key={option} value={option} className="text-sm focus:bg-electric focus:text-white">
-                                    {option}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="sm:col-span-2">
-                    <label htmlFor="enquiry-message" className={labelClass}>
-                        Project Description *
-                    </label>
-                    <textarea
-                        id="enquiry-message"
-                        required
-                        rows={5}
-                        maxLength={5000}
-                        value={form.message}
-                        onChange={updateField('message')}
-                        placeholder="Describe the component, loadcase, model or engineering challenge."
-                        className={`${inputClass} resize-y`}
-                    />
-                </div>
-            </div>
-
-            {/* Honeypot — hidden from real visitors and screen readers; bots that
-                fill every field will trip it. */}
-            <div
-                aria-hidden="true"
-                style={{ position: 'absolute', left: '-9999px', top: 0, width: 1, height: 1, overflow: 'hidden' }}
-            >
-                <label htmlFor="enquiry-website">Website</label>
-                <input
-                    id="enquiry-website"
-                    name="website"
-                    type="text"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={form.website}
-                    onChange={updateField('website')}
-                />
-            </div>
-
-            <button
-                type="submit"
-                disabled={status === 'submitting'}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 bg-electric px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-            >
-                {status === 'submitting' ? (
-                    <>
-                        <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
-                        Submitting
-                    </>
-                ) : (
-                    <>
-                        Submit Requirement
-                        <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-                    </>
-                )}
-            </button>
-            {status === 'error' && errorMessage && (
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-red-300" role="alert">
-                    {errorMessage}
-                </p>
-            )}
-            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/60">
-                Your information will be treated confidentially and used only to respond to your enquiry. See our{' '}
-                <a href="/privacy" className="underline transition-colors hover:text-electric">
-                    Privacy Policy
-                </a>
-                .
-            </p>
-        </form>
-    );
-}
-
 export default function HomePage() {
+    const { hash } = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (LEGACY_ANCHORS[hash]) navigate(LEGACY_ANCHORS[hash], { replace: true });
+    }, [hash, navigate]);
+
+    const coreCapabilities = CAPABILITY_GROUPS.find((group) => group.status === 'Core').items;
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
@@ -535,14 +98,14 @@ export default function HomePage() {
                         <Reveal delay={0.3}>
                             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                                 <a
-                                    href="#contact"
+                                    href="/contact"
                                     className="inline-flex items-center justify-center gap-2 bg-electric px-7 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition-all hover:bg-electric/85 active:scale-[0.99]"
                                 >
                                     Discuss Your Requirement
                                     <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
                                 </a>
                                 <a
-                                    href="#capabilities"
+                                    href="/capabilities"
                                     className="inline-flex items-center justify-center gap-2 border border-white/25 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.18em] text-white/85 transition-colors hover:border-electric hover:text-electric"
                                 >
                                     Explore Capabilities
@@ -587,403 +150,85 @@ export default function HomePage() {
                     </div>
                 </section>
 
-                {/* ABOUT — 01 */}
-                <section id="about" className="bg-background">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="About"
-                                title="An engineering-first consultancy, built around simulation"
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-16">
-                            <Reveal delay={0.1}>
-                                <div className="space-y-5 leading-relaxed text-muted-foreground">
-                                    <p>
-                                        CAxperts Engineering Pvt. Ltd. is a Pune-based engineering services company
-                                        specialising in computer-aided engineering and design. We support automotive
-                                        and industrial customers across the product development cycle — from early
-                                        concept studies to detailed simulation, design and validation support.
-                                    </p>
-                                    <p>
-                                        Our practice spans CAE and simulation, CAD and engineering, pre/post
-                                        processing, engineering consulting, digital engineering and automation, and
-                                        resource augmentation. We work as an extension of our customers' engineering
-                                        teams — bringing specialist simulation knowledge, disciplined processes and
-                                        modern automation to every engagement.
-                                    </p>
-                                    <p>
-                                        We believe good simulation is not just software — it is engineering judgement,
-                                        method and rigour applied consistently. That belief shapes how we build
-                                        models, review results and document our work.
-                                    </p>
-                                </div>
-                                <div className="mt-8 grid grid-cols-2 gap-px border border-border bg-border">
-                                    {[
-                                        ['Discipline', 'CAE / CAD / Automation'],
-                                        ['Engagement', 'Projects & Augmentation'],
-                                        ['Base', 'Pune, Maharashtra'],
-                                        ['Serving', 'India & Global Teams'],
-                                    ].map(([label, value]) => (
-                                        <div key={label} className="bg-card px-4 py-4">
-                                            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                                {label}
-                                            </p>
-                                            <p className="mt-1.5 font-display text-sm font-semibold text-navy">
-                                                {value}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Reveal>
-                            <Reveal delay={0.2} y={32}>
-                                <figure className="relative border border-border">
-                                    <AiImageBadge />
-                                    <img
-                                        src={ABOUT_IMAGE}
-                                        alt="Two engineers reviewing CAD chassis models on dual monitors in the CAxperts engineering office in Pune"
-                                        className="h-72 w-full object-cover lg:h-[26rem]"
-                                        loading="lazy"
-                                    />
-                                    <figcaption className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                        <span>Engineering review, Pune studio</span>
-                                        <span className="hidden sm:inline">CAxperts / CAD</span>
-                                    </figcaption>
-                                </figure>
-                            </Reveal>
+                {/* ABOUT — teaser */}
+                <Section>
+                    <Reveal>
+                        <SectionHeader
+                            label="About"
+                            title="An engineering-first consultancy, built around simulation"
+                            description="CAxperts Engineering Pvt. Ltd. is a Pune-based engineering services company specialising in computer-aided engineering and design, supporting automotive and industrial product development from early concept studies to detailed simulation, design and validation."
+                        />
+                    </Reveal>
+                    <Reveal delay={0.1}>
+                        <div className="md:pl-[25%]">
+                            <MoreLink href="/about">More about CAxperts</MoreLink>
                         </div>
-                    </div>
-                </section>
+                    </Reveal>
+                </Section>
 
-                {/* WHY CAxperts */}
-                <section id="why-caxperts" className="bg-background">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Why CAxperts"
-                                title="Engineering support built around the decisions that matter"
-                                description="We combine specialist simulation practice with clear communication, disciplined reviews and delivery models that fit the customer organisation."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-                            {WHY_ITEMS.map((item, i) => (
-                                <Reveal key={item.title} delay={0.06 * i} className="h-full">
-                                    <article className="flex h-full flex-col bg-card p-6 lg:p-7">
-                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
-                                            {item.title}
-                                        </h3>
-                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
-                                    </article>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                {/* SERVICES — teaser */}
+                <Section tone="muted">
+                    <Reveal>
+                        <SectionHeader
+                            label="Services"
+                            title="Six practice areas, one engineering standard"
+                            description="Every engagement is delivered by specialist engineers using industry-standard tools and documented methods."
+                        />
+                    </Reveal>
+                    <ServiceCards />
+                </Section>
 
-                {/* SERVICES — 02 */}
-                <section id="services" className="tech-grid bg-secondary/60">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Services"
-                                title="Six practice areas, one engineering standard"
-                                description="Every engagement is delivered by specialist engineers using industry-standard tools and documented methods."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-                            {SERVICES.map((service, i) => {
-                                const Icon = SERVICE_ICONS[service.slug];
-                                return (
-                                    <Reveal key={service.slug} delay={0.06 * i} className="h-full">
-                                        <a
-                                            href={`/services/${service.slug}`}
-                                            className="group flex h-full flex-col bg-card p-6 transition-colors hover:bg-navy lg:p-8"
-                                        >
-                                            <div className="flex items-start justify-between">
-                                                <Icon className="h-6 w-6 text-electric" strokeWidth={1.5} aria-hidden="true" />
-                                            </div>
-                                            <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-navy group-hover:text-white">
-                                                {service.title}
-                                            </h3>
-                                            <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-hover:text-white/65">
-                                                {service.summary}
-                                            </p>
-                                            <span className="mt-auto flex items-center gap-2 pt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-electric">
-                                                Learn more
-                                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-                                            </span>
-                                        </a>
-                                    </Reveal>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </section>
-
-                {/* CAPABILITIES — 03 */}
-                <section id="capabilities" className="tech-grid-dark bg-navy">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
+                {/* CAPABILITIES — teaser */}
+                <Section tone="dark">
+                    <Reveal>
+                        <SectionHeader
                             dark
-                                label="Capabilities"
-                                title="What we deliver today — and what is on our roadmap"
-                                description="We are transparent about maturity: core practice areas, available capabilities, and planned additions are clearly separated."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-white/15 bg-white/15 lg:grid-cols-3">
-                            {CAPABILITY_GROUPS.map((group, gi) => (
-                                <Reveal key={group.status} delay={0.08 * gi} className="h-full">
-                                    <div className="flex h-full flex-col bg-navy p-6 lg:p-8">
-                                        <div className="flex items-center justify-between">
-                                            <span
-                                                className={`inline-flex px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.2em] ${group.statusClass}`}
-                                            >
-                                                {group.status}
-                                            </span>
-                                        </div>
-                                        <ul className="mt-6 flex-1 divide-y divide-white/10 border-y border-white/10">
-                                            {group.items.map((item) => (
-                                                <li
-                                                    key={item}
-                                                    className="flex items-center justify-between py-3.5 font-display text-lg font-semibold text-white/90"
-                                                >
-                                                    {item}
-                                                    <span className="h-1.5 w-1.5 bg-electric" aria-hidden="true" />
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <p className="mt-5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/60">
-                                            {group.note}
-                                        </p>
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-
-                        <Reveal delay={0.15}>
-                            <div className="mt-14 border border-white/15">
-                                <p className="border-b border-white/15 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.24em] text-white/60">
-                                    Toolchain — Solvers · Pre/Post · CAD · Scripting
-                                </p>
-                                <div className="grid grid-cols-2 gap-px bg-white/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                                    {TOOLS.map((tool) => (
-                                        <div key={tool} className="bg-navy px-4 py-4">
-                                            <p className="font-mono text-sm font-medium text-white/85">{tool}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </Reveal>
-                    </div>
-                </section>
-
-                {/* INDUSTRIES — 04 */}
-                <section id="industries" className="bg-background">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Industries"
-                                title="Sector knowledge that shapes better models"
-                                description="Our engineers bring domain context to every model — so loadcases, constraints and acceptance criteria reflect real operating conditions."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-                            {INDUSTRIES.map((industry, i) => (
-                                <Reveal key={industry.name} delay={0.06 * i} className="h-full">
-                                    <div className="flex h-full items-start gap-5 bg-card p-6 lg:p-7">
-                                        <div>
-                                            <industry.icon
-                                                className="h-5 w-5 text-electric"
-                                                strokeWidth={1.5}
-                                                aria-hidden="true"
-                                            />
-                                            <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-navy">
-                                                {industry.name}
-                                            </h3>
-                                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                                                {industry.detail}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* HOW WE WORK — 05 */}
-                <section id="process" className="tech-grid bg-secondary/60">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="How We Work"
-                                title="A disciplined loop from requirement to delivery"
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-                            {PROCESS_STEPS.map((step, i) => (
-                                <Reveal key={step.name} delay={0.06 * i} className="h-full">
-                                    <div className="flex h-full flex-col bg-card p-5">
-                                        <h3 className="font-display text-base font-bold tracking-tight text-navy">
-                                            {step.name}
-                                        </h3>
-                                        <p className="mt-2.5 text-[13px] leading-relaxed text-muted-foreground">
-                                            {step.detail}
-                                        </p>
-                                        {i < PROCESS_STEPS.length - 1 && (
-                                            <ArrowRight
-                                                className="mt-auto hidden h-4 w-4 pt-0 text-navy/25 lg:mt-4 lg:block"
-                                                strokeWidth={1.5}
-                                                aria-hidden="true"
-                                            />
-                                        )}
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                        <Reveal delay={0.2}>
-                            <p className="mt-8 max-w-2xl font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-muted-foreground">
-                                Understand → Plan → Execute → Validate → Deliver — applied to every engagement, from a
-                                single loadcase to a full programme.
-                            </p>
-                        </Reveal>
-                    </div>
-                </section>
-
-                {/* DELIVERY MODEL */}
-                <section id="delivery" className="bg-background">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                                label="Delivery Model"
-                                title="Flexible collaboration across Europe and India"
-                                description="A structured customer interface paired with practical engineering execution. The model adapts to the scope, team and review rhythm of each engagement."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
-                            {DELIVERY_MODELS.map((model, i) => (
-                                <Reveal key={model.name} delay={0.06 * i} className="h-full">
-                                    <article className="flex h-full flex-col bg-card p-6 lg:p-7">
-                                        <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-navy">
-                                            {model.name}
-                                        </h3>
-                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{model.detail}</p>
-                                    </article>
-                                </Reveal>
-                            ))}
-                        </div>
-                        <Reveal delay={0.2}>
-                            <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-3">
-                                {[
-                                    ['Europe', 'Customer interface · Requirements · Coordination'],
-                                    ['CAxperts', 'Methods · Reviews · Technical communication'],
-                                    ['India', 'CAE execution · Modelling · Automation · Reporting'],
-                                ].map(([label, detail]) => (
-                                    <div key={label} className="bg-card px-5 py-5">
-                                        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-electric">{label}</p>
-                                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{detail}</p>
-                                    </div>
+                            label="Capabilities"
+                            title="Specialist simulation practice, industry-standard tools"
+                            description="Our core practice areas today, delivered with the solvers, pre/post processors and CAD systems our customers already use."
+                        />
+                    </Reveal>
+                    <Reveal delay={0.1}>
+                        <div className="mt-12 md:pl-[25%]">
+                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Core practice</p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                {coreCapabilities.map((item) => (
+                                    <span key={item} className="bg-electric px-3 py-1.5 font-display text-sm font-semibold text-white">
+                                        {item}
+                                    </span>
                                 ))}
                             </div>
-                        </Reveal>
-                    </div>
-                </section>
-
-                {/* QUALITY — 06 */}
-                <section id="quality" className="tech-grid-dark bg-navy-deep">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                            dark
-                                label="Quality & Compliance"
-                                title="Clear commitments, honestly stated"
-                                description="We distinguish clearly between what is in place today, what is in progress, and what is planned. Certifications listed as planned are not yet held."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-px border border-white/15 bg-white/15 lg:grid-cols-3">
-                            {QUALITY_ITEMS.map((group, gi) => (
-                                <Reveal key={group.status} delay={0.08 * gi} className="h-full">
-                                    <div className="flex h-full flex-col bg-navy-deep p-6 lg:p-8">
-                                        <span
-                                            className={`inline-flex w-fit px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.2em] ${group.statusClass}`}
-                                        >
-                                            {group.status}
-                                        </span>
-                                        <ul className="mt-6 flex-1 space-y-5">
-                                            {group.items.map((item) => (
-                                                <li key={item.name} className="border-l-2 border-electric/50 pl-4">
-                                                    <p className="font-display text-base font-semibold text-white/90">
-                                                        {item.name}
-                                                    </p>
-                                                    <p className="mt-1.5 text-sm leading-relaxed text-white/55">
-                                                        {item.detail}
-                                                    </p>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </Reveal>
-                            ))}
+                            <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Toolchain</p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                {TOOLS.map((tool) => (
+                                    <span key={tool} className="border border-white/15 px-2.5 py-1 font-mono text-[11px] text-white/75">
+                                        {tool}
+                                    </span>
+                                ))}
+                            </div>
+                            <MoreLink href="/capabilities" dark>
+                                All capabilities
+                            </MoreLink>
                         </div>
-                    </div>
-                </section>
+                    </Reveal>
+                </Section>
 
-                {/* CONTACT — 09 */}
-                <section id="contact" className="tech-grid-dark bg-navy">
-                    <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-                        <Reveal>
-                            <SectionHeader
-                            dark
-                                label="Contact"
-                                title="Discuss your engineering requirement"
-                                description="Tell us about your programme, component or engineering challenge. We respond with a technical point of view and a clear next step."
-                            />
-                        </Reveal>
-                        <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-14">
-                            <Reveal delay={0.1} className="lg:col-span-2">
-                                <div className="flex h-full flex-col">
-                                    <div className="space-y-px border border-white/15 bg-white/15">
-                                        <div className="bg-navy p-5">
-                                            <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                                                <MapPin className="h-3.5 w-3.5 text-electric" strokeWidth={1.75} />
-                                                Office
-                                            </p>
-                                            <p className="mt-2 font-display text-lg font-semibold text-white">
-                                                Pune, Maharashtra, India
-                                            </p>
-                                        </div>
-                                        <div className="bg-navy p-5">
-                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                                                Engagement Models
-                                            </p>
-                                            <p className="mt-2 text-sm leading-relaxed text-white/75">
-                                                Fixed-scope projects · Time & material · Dedicated engineering
-                                                resources
-                                            </p>
-                                        </div>
-                                        <div className="bg-navy p-5">
-                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                                                Confidentiality
-                                            </p>
-                                            <p className="mt-2 text-sm leading-relaxed text-white/75">
-                                                NDA available on request before any technical discussion.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="mt-8 font-display text-2xl font-bold leading-snug tracking-tight text-white/90 lg:text-3xl">
-                                        Engineering Intelligence.
-                                        <br />
-                                        <span className="text-electric">Simulation Excellence.</span>
-                                    </p>
-                                </div>
-                            </Reveal>
-                            <Reveal delay={0.2} className="lg:col-span-3">
-                                <EnquiryForm />
-                            </Reveal>
-                        </div>
-                    </div>
-                </section>
+                {/* INDUSTRIES — teaser */}
+                <Section>
+                    <Reveal>
+                        <SectionHeader
+                            label="Industries"
+                            title="Sector knowledge that shapes better models"
+                            description="Our engineers bring domain context to every model — so loadcases, constraints and acceptance criteria reflect real operating conditions."
+                        />
+                    </Reveal>
+                    <IndustryGrid compact />
+                    <Reveal delay={0.1}>
+                        <MoreLink href="/industries">Industries we serve</MoreLink>
+                    </Reveal>
+                </Section>
+
+                <CtaBand />
             </main>
 
             <SiteFooter />

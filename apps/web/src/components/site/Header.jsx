@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Menu, ArrowUpRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 
+// `desktop: false` keeps Contact out of the desktop bar, where the
+// "Discuss Your Requirement" button already links to it.
 const NAV_LINKS = [
     { label: 'About', href: '/#about' },
     { label: 'Services', href: '/#services' },
@@ -10,11 +13,14 @@ const NAV_LINKS = [
     { label: 'Process', href: '/#process' },
     { label: 'Case Studies', href: '/#case-studies' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Contact', href: '/#contact', desktop: false },
 ];
 
 export default function SiteHeader() {
     const [open, setOpen] = useState(false);
+    const { pathname } = useLocation();
+    // Only page links (not home-page section anchors) can be "current".
+    const isCurrent = (href) => !href.includes('#') && href === pathname;
 
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-navy-deep/95 backdrop-blur-sm">
@@ -36,12 +42,16 @@ export default function SiteHeader() {
                     </span>
                 </a>
 
-                <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
-                    {NAV_LINKS.map((link) => (
+                {/* The full bar needs ~1,100px, so it only appears from xl (1280px); narrower screens use the menu. */}
+                <nav className="hidden items-center gap-5 xl:flex 2xl:gap-7" aria-label="Primary">
+                    {NAV_LINKS.filter((link) => link.desktop !== false).map((link) => (
                         <a
                             key={link.href}
                             href={link.href}
-                            className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/65 transition-colors hover:text-electric"
+                            aria-current={isCurrent(link.href) ? 'page' : undefined}
+                            className={`border-b-2 py-1 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors hover:text-electric ${
+                                isCurrent(link.href) ? 'border-electric text-white' : 'border-transparent text-white/75'
+                            }`}
                         >
                             {link.label}
                         </a>
@@ -61,7 +71,7 @@ export default function SiteHeader() {
                         <SheetTrigger asChild>
                             <button
                                 type="button"
-                                className="inline-flex h-11 w-11 items-center justify-center border border-white/15 text-white transition-colors hover:border-electric hover:text-electric lg:hidden"
+                                className="inline-flex h-11 w-11 items-center justify-center border border-white/15 text-white transition-colors hover:border-electric hover:text-electric xl:hidden"
                                 aria-label="Open menu"
                             >
                                 <Menu className="h-5 w-5" strokeWidth={1.75} />
@@ -76,10 +86,13 @@ export default function SiteHeader() {
                                             key={link.href}
                                             href={link.href}
                                             onClick={() => setOpen(false)}
-                                            className="flex items-center justify-between border-b border-white/10 py-3.5 font-display text-lg text-white/90 transition-colors hover:text-electric"
+                                            aria-current={isCurrent(link.href) ? 'page' : undefined}
+                                            className={`flex items-center justify-between border-b border-white/10 py-3.5 font-display text-lg transition-colors hover:text-electric ${
+                                                isCurrent(link.href) ? 'text-electric' : 'text-white/90'
+                                            }`}
                                         >
                                             {link.label}
-                                            <span className="font-mono text-[10px] tracking-[0.2em] text-white/35">
+                                            <span className="font-mono text-[11px] tracking-[0.2em] text-white/60" aria-hidden="true">
                                                 0{i + 1}
                                             </span>
                                         </a>

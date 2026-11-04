@@ -4,7 +4,7 @@ export default function SectionHeader({ label, title, description, dark = false 
     return (
         <div className="grid gap-6 border-t pt-8 md:grid-cols-12 md:gap-8" style={{ borderColor: dark ? 'hsl(0 0% 100% / 0.12)' : 'hsl(var(--border))' }}>
             <div className="md:col-span-3">
-                <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-electric">
+                <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-electric">
                     {label}
                 </p>
             </div>

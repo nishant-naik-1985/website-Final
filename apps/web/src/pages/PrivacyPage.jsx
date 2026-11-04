@@ -3,9 +3,10 @@ import { Helmet } from 'react-helmet';
 import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import Seo from '@/components/Seo';
+import { analyticsEnabled, openCookieSettings } from '@/lib/analytics';
 
 const CONTACT_EMAIL = 'info@caxperts-engineering.com';
-const LAST_UPDATED = '2 November 2026';
+const LAST_UPDATED = '4 November 2026';
 
 function PolicySection({ id, title, children }) {
     return (
@@ -41,15 +42,15 @@ export default function PrivacyPage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
-                <title>Privacy Policy | CAXPERTS Engineering</title>
+                <title>Privacy Policy | CAxperts Engineering</title>
                 <meta
                     name="description"
                     content="How CAxperts Engineering Pvt. Ltd. collects, uses and protects personal data from enquiries, job applications and visits to this website."
                 />
                 <Seo
-                    title="Privacy Policy | CAXPERTS Engineering"
+                    title="Privacy Policy | CAxperts Engineering"
                     description="How CAxperts Engineering collects, uses and protects personal data."
-                    siteName="CAXPERTS Engineering"
+                    siteName="CAxperts Engineering"
                 />
             </Helmet>
 
@@ -120,13 +121,50 @@ export default function PrivacyPage() {
                         </p>
                     </PolicySection>
 
-                    <PolicySection id="cookies" title="Cookies and tracking">
-                        <p>
-                            This website does not use cookies, analytics, advertising or tracking tools. Fonts are served
-                            from our own server, so your browser does not contact third-party font services when you
-                            visit. If we introduce analytics in the future, we will update this policy and, where the
-                            law requires it, ask for your consent first.
-                        </p>
+                    {/* The analytics wording follows the site's actual setup: it only
+                        describes Google Analytics once a measurement ID is configured. */}
+                    <PolicySection id="cookies" title="Cookies and analytics">
+                        {analyticsEnabled ? (
+                            <>
+                                <p>
+                                    With your consent, we use <strong className="text-navy">Google Analytics</strong>{' '}
+                                    (provided by Google) to understand how visitors use this website, for example which
+                                    pages are visited, how visitors arrive and roughly which country they are in. This
+                                    helps us improve the site. Google Analytics is only loaded, and its cookies are only
+                                    set, after you click &ldquo;Accept&rdquo; in the cookie banner. If you click
+                                    &ldquo;Reject&rdquo;, no analytics runs.
+                                </p>
+                                <p>
+                                    Google Analytics sets the cookies <code>_ga</code> and <code>_ga_&lt;ID&gt;</code>,
+                                    which expire after two years. It shortens IP addresses before storing them, and we have
+                                    turned off Google&rsquo;s advertising features, so this data is not used for
+                                    advertising. We also count completed enquiry and job-application forms, without any of
+                                    the details you entered.
+                                </p>
+                                <p>
+                                    You can change your choice at any time with{' '}
+                                    <button
+                                        type="button"
+                                        onClick={openCookieSettings}
+                                        className="font-medium text-electric hover:underline"
+                                    >
+                                        Cookie settings
+                                    </button>{' '}
+                                    (also in the footer). Withdrawing consent stops analytics and deletes its cookies.
+                                </p>
+                                <p>
+                                    Apart from this, the site stores only your cookie choice in your browser. Fonts are
+                                    served from our own server, so your browser does not contact third-party font services.
+                                </p>
+                            </>
+                        ) : (
+                            <p>
+                                This website does not use cookies, analytics, advertising or tracking tools. Fonts are
+                                served from our own server, so your browser does not contact third-party font services
+                                when you visit. If we introduce analytics in the future, we will update this policy and,
+                                where the law requires it, ask for your consent first.
+                            </p>
+                        )}
                     </PolicySection>
 
                     <PolicySection id="how-we-use" title="How we use your data">
@@ -151,6 +189,7 @@ export default function PrivacyPage() {
                             necessary to take steps at your request before entering into a contract (enquiries and job
                             applications), for our legitimate interests in running and securing our business and
                             communicating with business contacts, and to comply with legal obligations.
+                            {analyticsEnabled && ' Analytics cookies are used only on the basis of your consent.'}
                         </p>
                         <p>
                             <strong className="text-navy">Under India&rsquo;s DPDP Act</strong>, we process the data you
@@ -167,6 +206,13 @@ export default function PrivacyPage() {
                             email, so form submissions and emails pass through and are stored on their servers. Hostinger
                             processes this data on our behalf and only to provide those services.
                         </p>
+                        {analyticsEnabled && (
+                            <p>
+                                If you accept analytics cookies, usage data is processed by{' '}
+                                <strong className="text-navy">Google</strong> (Google Ireland Ltd. and Google LLC) on our
+                                behalf to provide Google Analytics.
+                            </p>
+                        )}
                         <p>
                             We may also disclose data where the law requires it, for example to comply with a court
                             order or a request from a public authority. We do not share your data with anyone else
@@ -183,6 +229,12 @@ export default function PrivacyPage() {
                             safeguards in place for these transfers, such as the European Commission&rsquo;s Standard
                             Contractual Clauses.
                         </p>
+                        {analyticsEnabled && (
+                            <p>
+                                Google Analytics data may be processed in the United States. Google LLC is certified under
+                                the EU&ndash;US Data Privacy Framework.
+                            </p>
+                        )}
                     </PolicySection>
 
                     <PolicySection id="retention" title="How long we keep data">
@@ -192,6 +244,9 @@ export default function PrivacyPage() {
                                 'Job applications and CVs: up to 12 months after you apply, so we can consider you for future roles. If you are hired, your application becomes part of your employee record.',
                                 'Data relating to customer engagements: for as long as the engagement lasts and afterwards as required by contract, tax and accounting law.',
                                 'Spam-protection records of IP addresses: used for no more than one hour, then cleared automatically the next time a form is submitted.',
+                                ...(analyticsEnabled
+                                    ? ['Google Analytics data: up to 14 months, after which Google deletes it automatically.']
+                                    : []),
                             ]}
                         />
                         <p>

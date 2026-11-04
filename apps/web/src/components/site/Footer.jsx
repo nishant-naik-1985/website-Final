@@ -1,9 +1,10 @@
 import React from 'react';
 import { MapPin } from 'lucide-react';
+import { analyticsEnabled, openCookieSettings } from '@/lib/analytics';
 
 const EXPLORE_LINKS = [
     { label: 'About', href: '/#about' },
-    { label: 'Why CAXPERTS', href: '/#why-caxperts' },
+    { label: 'Why CAxperts', href: '/#why-caxperts' },
     { label: 'Services', href: '/#services' },
     { label: 'Capabilities', href: '/#capabilities' },
     { label: 'Industries', href: '/#industries' },
@@ -34,7 +35,7 @@ export default function SiteFooter() {
                         <p className="font-display text-2xl font-bold tracking-tight">
                             CA<span className="text-electric">x</span>perts
                         </p>
-                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+                        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                             Engineering Pvt. Ltd.
                         </p>
                         <p className="mt-5 max-w-xs font-display text-sm text-white/75">
@@ -47,7 +48,7 @@ export default function SiteFooter() {
                     </div>
 
                     <div>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">Explore</p>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Explore</p>
                         <ul className="mt-4 space-y-2.5">
                             {EXPLORE_LINKS.map((link) => (
                                 <li key={link.href}>
@@ -63,7 +64,7 @@ export default function SiteFooter() {
                     </div>
 
                     <div>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">Services</p>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Services</p>
                         <ul className="mt-4 space-y-2.5">
                             {SERVICE_LINKS.map((label) => (
                                 <li key={label}>
@@ -79,7 +80,7 @@ export default function SiteFooter() {
                     </div>
 
                     <div>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">Contact</p>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">Contact</p>
                         <p className="mt-4 text-sm leading-relaxed text-white/70">
                             CAxperts Engineering Pvt. Ltd.
                             <br />
@@ -101,14 +102,22 @@ export default function SiteFooter() {
                 </div>
 
                 <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="font-mono text-[11px] tracking-[0.08em] text-white/45">
+                    <p className="font-mono text-[11px] tracking-[0.08em] text-white/60">
                         © {year} CAxperts Engineering Pvt. Ltd. All rights reserved.
                         <span className="mx-2 text-white/25" aria-hidden="true">·</span>
                         <a href="/privacy" className="transition-colors hover:text-electric">
                             Privacy Policy
                         </a>
+                        {analyticsEnabled && (
+                            <>
+                                <span className="mx-2 text-white/25" aria-hidden="true">·</span>
+                                <button type="button" onClick={openCookieSettings} className="transition-colors hover:text-electric">
+                                    Cookie settings
+                                </button>
+                            </>
+                        )}
                     </p>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45">
+                    <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/60">
                         CAE · CAD · Simulation · Product Development
                     </p>
                 </div>

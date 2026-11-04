@@ -1,8 +1,10 @@
-# SMTP credentials for the contact form (see web/server.js MAIL_CONFIG_PATH).
-# Never commit this — it holds live SMTP username/password.
-mail.config.json
+# SMTP credentials for the contact and job application forms (read by
+# web/public/api/*.php from the folder above the site root on Hostinger).
+# Never commit this — it holds the live SMTP username/password.
 mail.config.php
+# Left over from the old Node mail handler; still ignored so a stray copy
+# with real credentials can never be committed.
+mail.config.json
 
 # Example config template, safe to commit.
-!mail.config.example.json
 !mail.config.example.php

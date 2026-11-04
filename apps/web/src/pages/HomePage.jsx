@@ -26,6 +26,7 @@ import SiteHeader from '@/components/site/Header';
 import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
 import Seo from '@/components/Seo';
+import { trackEvent } from '@/lib/analytics';
 import {
     Select,
     SelectContent,
@@ -299,6 +300,7 @@ function EnquiryForm() {
                 return;
             }
 
+            trackEvent('generate_lead', { form: 'enquiry', service: form.interest });
             setStatus('success');
             setForm(EMPTY_FORM);
         } catch (err) {
@@ -328,8 +330,8 @@ function EnquiryForm() {
     }
 
     const inputClass =
-        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-electric';
-    const labelClass = 'mb-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-white/55';
+        'w-full border border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white placeholder:text-white/50 outline-none transition-colors focus:border-electric';
+    const labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-[0.2em] text-white/55';
 
     return (
         <form onSubmit={handleSubmit} className="border border-white/15 bg-white/[0.03] p-6 sm:p-8" noValidate={false}>
@@ -404,7 +406,7 @@ function EnquiryForm() {
                     >
                         <SelectTrigger
                             id="enquiry-interest"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/35 [&>svg]:text-white/50"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
                         >
                             <SelectValue placeholder="Select a service area" />
                         </SelectTrigger>
@@ -431,7 +433,7 @@ function EnquiryForm() {
                     >
                         <SelectTrigger
                             id="enquiry-industry"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/35 [&>svg]:text-white/50"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
                         >
                             <SelectValue placeholder="Select an industry" />
                         </SelectTrigger>
@@ -454,7 +456,7 @@ function EnquiryForm() {
                     >
                         <SelectTrigger
                             id="enquiry-timeline"
-                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/35 [&>svg]:text-white/50"
+                            className="h-auto rounded-none border-white/15 bg-white/[0.04] px-3.5 py-3 text-sm text-white focus:border-electric focus:ring-0 focus:ring-offset-0 data-[placeholder]:text-white/50 [&>svg]:text-white/50"
                         >
                             <SelectValue placeholder="Select a timeframe" />
                         </SelectTrigger>
@@ -524,7 +526,7 @@ function EnquiryForm() {
                     {errorMessage}
                 </p>
             )}
-            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
+            <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/60">
                 Your information will be treated confidentially and used only to respond to your enquiry. See our{' '}
                 <a href="/privacy" className="underline transition-colors hover:text-electric">
                     Privacy Policy
@@ -539,10 +541,10 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Helmet>
-                <title>CAXPERTS Engineering | CAE, CAD & Simulation Engineering</title>
+                <title>CAxperts Engineering | CAE, CAD & Simulation Engineering</title>
                 <meta
                     name="description"
-                    content="CAXPERTS provides CAE, CAD and simulation engineering for automotive, industrial and mobility product development, from concept to validated design."
+                    content="CAxperts provides CAE, CAD and simulation engineering for automotive, industrial and mobility product development, from concept to validated design."
                 />
                 <script type="application/ld+json">
                     {JSON.stringify({
@@ -557,9 +559,9 @@ export default function HomePage() {
                     })}
                 </script>
                 <Seo
-                    title="CAXPERTS Engineering | CAE, CAD & Simulation Engineering"
+                    title="CAxperts Engineering | CAE, CAD & Simulation Engineering"
                     description="CAE, CAD and simulation engineering for automotive, industrial and mobility product development."
-                    siteName="CAXPERTS Engineering"
+                    siteName="CAxperts Engineering"
                 />
             </Helmet>
 
@@ -619,7 +621,7 @@ export default function HomePage() {
                                     ['Practice', 'CAE · CAD · Automation'],
                                 ].map(([label, value]) => (
                                     <div key={label} className="bg-navy-deep px-5 py-4">
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
+                                        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                                             {label}
                                         </p>
                                         <p className="mt-1.5 font-display text-sm font-semibold text-white/90">
@@ -640,7 +642,7 @@ export default function HomePage() {
                                     className="h-64 w-full object-cover sm:h-80 lg:h-[26rem]"
                                     loading="eager"
                                 />
-                                <figcaption className="flex items-center justify-between border-t border-white/15 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+                                <figcaption className="flex items-center justify-between border-t border-white/15 px-4 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">
                                     <span>Finite element mesh study, body-in-white</span>
                                     <span className="hidden sm:inline">CAxperts / CAE</span>
                                 </figcaption>
@@ -688,7 +690,7 @@ export default function HomePage() {
                                         ['Serving', 'India & Global Teams'],
                                     ].map(([label, value]) => (
                                         <div key={label} className="bg-card px-4 py-4">
-                                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                                                 {label}
                                             </p>
                                             <p className="mt-1.5 font-display text-sm font-semibold text-navy">
@@ -707,7 +709,7 @@ export default function HomePage() {
                                         className="h-72 w-full object-cover lg:h-[26rem]"
                                         loading="lazy"
                                     />
-                                    <figcaption className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                    <figcaption className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                                         <span>Engineering review, Pune studio</span>
                                         <span className="hidden sm:inline">CAxperts / CAD</span>
                                     </figcaption>
@@ -717,12 +719,12 @@ export default function HomePage() {
                     </div>
                 </section>
 
-                {/* WHY CAXPERTS */}
+                {/* WHY CAxperts */}
                 <section id="why-caxperts" className="bg-background">
                     <div className="mx-auto max-w-[90rem] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
                         <Reveal>
                             <SectionHeader
-                                label="Why CAXPERTS"
+                                label="Why CAxperts"
                                 title="Engineering support built around the decisions that matter"
                                 description="We combine specialist simulation practice with clear communication, disciplined reviews and delivery models that fit the customer organisation."
                             />
@@ -793,7 +795,7 @@ export default function HomePage() {
                                     <div className="flex h-full flex-col bg-navy p-6 lg:p-8">
                                         <div className="flex items-center justify-between">
                                             <span
-                                                className={`inline-flex px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] ${group.statusClass}`}
+                                                className={`inline-flex px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.2em] ${group.statusClass}`}
                                             >
                                                 {group.status}
                                             </span>
@@ -809,7 +811,7 @@ export default function HomePage() {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <p className="mt-5 font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/45">
+                                        <p className="mt-5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/60">
                                             {group.note}
                                         </p>
                                     </div>
@@ -819,7 +821,7 @@ export default function HomePage() {
 
                         <Reveal delay={0.15}>
                             <div className="mt-14 border border-white/15">
-                                <p className="border-b border-white/15 px-5 py-3.5 font-mono text-[10px] uppercase tracking-[0.24em] text-white/50">
+                                <p className="border-b border-white/15 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.24em] text-white/60">
                                     Toolchain — Solvers · Pre/Post · CAD · Scripting
                                 </p>
                                 <div className="grid grid-cols-2 gap-px bg-white/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -933,11 +935,11 @@ export default function HomePage() {
                             <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-3">
                                 {[
                                     ['Europe', 'Customer interface · Requirements · Coordination'],
-                                    ['CAXPERTS', 'Methods · Reviews · Technical communication'],
+                                    ['CAxperts', 'Methods · Reviews · Technical communication'],
                                     ['India', 'CAE execution · Modelling · Automation · Reporting'],
                                 ].map(([label, detail]) => (
                                     <div key={label} className="bg-card px-5 py-5">
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-electric">{label}</p>
+                                        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-electric">{label}</p>
                                         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{detail}</p>
                                     </div>
                                 ))}
@@ -962,7 +964,7 @@ export default function HomePage() {
                                 <Reveal key={group.status} delay={0.08 * gi} className="h-full">
                                     <div className="flex h-full flex-col bg-navy-deep p-6 lg:p-8">
                                         <span
-                                            className={`inline-flex w-fit px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] ${group.statusClass}`}
+                                            className={`inline-flex w-fit px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.2em] ${group.statusClass}`}
                                         >
                                             {group.status}
                                         </span>
@@ -1007,14 +1009,14 @@ export default function HomePage() {
                                                 className="h-52 w-full object-cover"
                                                 loading="lazy"
                                             />
-                                            <figcaption className="flex items-center justify-between border-t border-border px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                            <figcaption className="flex items-center justify-between border-t border-border px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                                                 <span>
                                                     {study.caption}
                                                 </span>
                                             </figcaption>
                                         </figure>
                                         <div className="flex flex-1 flex-col border-t border-border p-6">
-                                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-electric">
+                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-electric">
                                                 {study.tag}
                                             </p>
                                             <h3 className="mt-3 font-display text-lg font-bold leading-snug tracking-tight text-navy">
@@ -1022,19 +1024,19 @@ export default function HomePage() {
                                             </h3>
                                             <dl className="mt-4 flex-1 space-y-4 text-sm leading-relaxed">
                                                 <div>
-                                                    <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                                    <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                                                         Scope
                                                     </dt>
                                                     <dd className="mt-1 text-foreground/80">{study.scope}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                                    <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                                                         Approach
                                                     </dt>
                                                     <dd className="mt-1 text-foreground/80">{study.approach}</dd>
                                                 </div>
                                             </dl>
-                                            <p className="mt-5 border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                                            <p className="mt-5 border-t border-border pt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
                                                 Anonymised engagement — details under NDA
                                             </p>
                                         </div>
@@ -1061,7 +1063,7 @@ export default function HomePage() {
                                 <div className="flex h-full flex-col">
                                     <div className="space-y-px border border-white/15 bg-white/15">
                                         <div className="bg-navy p-5">
-                                            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                            <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                                                 <MapPin className="h-3.5 w-3.5 text-electric" strokeWidth={1.75} />
                                                 Office
                                             </p>
@@ -1070,7 +1072,7 @@ export default function HomePage() {
                                             </p>
                                         </div>
                                         <div className="bg-navy p-5">
-                                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                                                 Engagement Models
                                             </p>
                                             <p className="mt-2 text-sm leading-relaxed text-white/75">
@@ -1079,7 +1081,7 @@ export default function HomePage() {
                                             </p>
                                         </div>
                                         <div className="bg-navy p-5">
-                                            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                                            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
                                                 Confidentiality
                                             </p>
                                             <p className="mt-2 text-sm leading-relaxed text-white/75">

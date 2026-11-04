@@ -3,13 +3,13 @@ import { Helmet } from 'react-helmet';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
+import AiImageBadge from '@/components/AiImageBadge';
 import SiteHeader from '@/components/site/Header';
-import MeshGraphic from '@/components/site/MeshGraphic';
 import SiteFooter from '@/components/site/Footer';
 import SectionHeader from '@/components/site/SectionHeader';
 import { CtaBand, IndustryGrid, MoreLink, Section, ServiceCards } from '@/components/site/blocks';
 import Seo from '@/components/Seo';
-import { CAPABILITY_GROUPS, TOOLS } from '@/data/content';
+import { CAPABILITY_GROUPS, HERO_IMAGE, TOOLS } from '@/data/content';
 
 // The site used to be one long page with #anchors. Links shared before the
 // split (e.g. /#contact on LinkedIn) are forwarded to the page that now holds
@@ -133,12 +133,16 @@ export default function HomePage() {
                     </div>
                     <div className="mx-auto max-w-[90rem] px-4 pb-16 sm:px-6 lg:px-10">
                         <Reveal y={32}>
-                            <figure className="relative border border-white/15 bg-navy-deep">
-                                <div className="h-64 w-full sm:h-80 lg:h-[26rem]">
-                                    <MeshGraphic />
-                                </div>
+                            <figure className="relative border border-white/15">
+                                <AiImageBadge />
+                                <img
+                                    src={HERO_IMAGE}
+                                    alt="Finite element mesh of an automotive body-in-white with electric-blue wireframe on a dark navy background"
+                                    className="h-64 w-full object-cover sm:h-80 lg:h-[26rem]"
+                                    loading="eager"
+                                />
                                 <figcaption className="flex items-center justify-between border-t border-white/15 px-4 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">
-                                    <span>Mesh · Loadcase · Result</span>
+                                    <span>Finite element mesh study, body-in-white</span>
                                     <span className="hidden sm:inline">CAxperts / CAE</span>
                                 </figcaption>
                             </figure>

@@ -17,6 +17,7 @@ import {
 // text lives in services.js instead, because tools/prerender.js imports it in
 // Node (this file imports icon components, so it can't be).
 
+export const HERO_IMAGE = 'https://images.hostinger.com/cf164097-67c4-40f2-8a60-a14114e849ba.png';
 export const ABOUT_IMAGE = 'https://images.hostinger.com/67362f6f-7741-4dad-bb9d-36896c181121.png';
 
 export const SERVICE_ICONS = {

@@ -4,9 +4,8 @@ import fs from 'fs';
 import path from 'path';
 
 const CLEAN_CONTENT_REGEX = {
-	comments: /\/\*[\s\S]*?\*\/|\/\/.*$/gm,
-	templateLiterals: /`[\s\S]*?`/g,
-	strings: /'[^']*'|"[^"]*"/g,
+	// `(?<!:)` keeps URLs like https://… from being read as line comments.
+	comments: /\/\*[\s\S]*?\*\/|(?<!:)\/\/.*$/gm,
 	jsxExpressions: /\{.*?\}/g,
 	htmlEntities: {
 		quot: /&quot;/g,
@@ -30,11 +29,11 @@ const EXTRACTION_REGEX = {
 	description: /<meta\s+name=["']description["']\s+content=["'](.*?)["']/i
 };
 
+// Only comments are stripped before looking for <Helmet>. Stripping quoted
+// strings too used to trip over apostrophes in JSX text ("customers' teams"),
+// swallowing the <Helmet> block so pages went missing from llms.txt.
 function cleanContent(content) {
-	return content
-		.replace(CLEAN_CONTENT_REGEX.comments, '')
-		.replace(CLEAN_CONTENT_REGEX.templateLiterals, '""')
-		.replace(CLEAN_CONTENT_REGEX.strings, '""');
+	return content.replace(CLEAN_CONTENT_REGEX.comments, '');
 }
 
 function cleanText(text) {
@@ -80,7 +79,9 @@ function extractRoutes(appJsxPath) {
 					routePath = pathMatch[1].startsWith('/') ? pathMatch[1] : `/${pathMatch[1]}`;
 				}
 
-				routes.set(componentName, routePath);
+				// A catch-all route (`path="*"`) is the 404 page, not a real page,
+				// so mark it to be left out of llms.txt.
+				routes.set(componentName, routePath?.includes('*') ? null : routePath);
 			}
 		}
 
@@ -112,6 +113,8 @@ function extractHelmetData(content, filePath, routes) {
 	const description = cleanText(descMatch?.[1]);
 
 	const fileName = path.basename(filePath, path.extname(filePath));
+	if (routes.get(fileName) === null) return null;
+
 	const url = routes.size && routes.has(fileName)
 		? routes.get(fileName)
 		: generateFallbackUrl(fileName);

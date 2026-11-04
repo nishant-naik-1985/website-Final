@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 import {
     ArrowRight,
     ArrowUpRight,
@@ -568,7 +569,15 @@ function JobList({ heading, items }) {
 }
 
 function JobPosting({ job, onApply }) {
-    const [expanded, setExpanded] = useState(false);
+    const { hash } = useLocation();
+    const isLinkedTo = hash === `#${job.id}`;
+    // A shared link such as /careers#business-development-cae-services should
+    // land on that job already open.
+    const [expanded, setExpanded] = useState(isLinkedTo);
+
+    useEffect(() => {
+        if (isLinkedTo) setExpanded(true);
+    }, [isLinkedTo]);
     const detailsId = `${job.id}-details`;
     const toggle = () => setExpanded((prev) => !prev);
 
